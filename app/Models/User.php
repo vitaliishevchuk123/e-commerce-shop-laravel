@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -38,6 +39,13 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole('Admin');
+        return $this->hasRole(['super admin', 'admin', 'writer', 'manager']);
+    }
+
+    public function scopeFilamentUsers(Builder $q): Builder
+    {
+        return $q->whereHas('roles', function (Builder $q) {
+            $q->whereIn('name', ['super admin', 'admin', 'writer', 'manager']);
+        });
     }
 }

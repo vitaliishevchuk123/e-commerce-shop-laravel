@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'street' => 'Головна',
                 'house_number' => '1',
                 'zip_code' => '01001',
+                'role' => 'super admin',
             ],
             [
                 'name' => 'Володимир Кличко',
@@ -29,6 +30,7 @@ class UserSeeder extends Seeder
                 'street' => 'Богдана Хмельницького',
                 'house_number' => '10',
                 'zip_code' => '02020',
+                'role' => 'manager',
             ],
             [
                 'name' => 'Віталій Кличко',
@@ -38,6 +40,7 @@ class UserSeeder extends Seeder
                 'street' => 'Тараса Шевченка',
                 'house_number' => '25',
                 'zip_code' => '03030',
+                'role' => 'admin',
             ],
             [
                 'name' => 'Василь Ломаченко',
@@ -47,6 +50,7 @@ class UserSeeder extends Seeder
                 'street' => 'Спортивна',
                 'house_number' => '5',
                 'zip_code' => '35050',
+                'role' => 'manager',
             ],
             [
                 'name' => 'Андрій Шевченко',
@@ -56,6 +60,7 @@ class UserSeeder extends Seeder
                 'street' => 'Шевченка',
                 'house_number' => '15',
                 'zip_code' => '04040',
+                'role' => 'writer',
             ],
             [
                 'name' => 'Володимир Боклан',
@@ -65,6 +70,7 @@ class UserSeeder extends Seeder
                 'street' => 'Липська',
                 'house_number' => '7',
                 'zip_code' => '06060',
+                'role' => 'writer',
             ],
             [
                 'name' => 'Тарас Цимбалюк',
@@ -74,6 +80,7 @@ class UserSeeder extends Seeder
                 'street' => 'Івана Франка',
                 'house_number' => '12',
                 'zip_code' => '79079',
+                'role' => 'writer',
             ],
             [
                 'name' => 'Євген Коноплянка',
@@ -83,13 +90,12 @@ class UserSeeder extends Seeder
                 'street' => 'Соборності',
                 'house_number' => '9',
                 'zip_code' => '25025',
+                'role' => 'writer',
             ],
         ];
 
-        $adminRole = Role::create(['name' => 'Admin']);
-
         foreach ($employees as $person) {
-            User::factory()
+            $user = User::factory()
                 ->state([
                     'name' => $person['name'],
                     'email' => $person['email'],
@@ -101,9 +107,8 @@ class UserSeeder extends Seeder
                     'house_number' => $person['house_number'],
                     'zip_code' => $person['zip_code'],
                 ]), 'addresses')
-                ->create()->each(function (User $user) use ($adminRole) {
-                    $user->assignRole($adminRole);
-                });
+                ->create();
+            $user->assignRole($person['role']);
         }
 
         User::factory(100)->create()->each(function ($user) {
