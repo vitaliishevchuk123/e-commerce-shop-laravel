@@ -8,12 +8,9 @@
 
 Will use some features, such as:
 
-- Authentication with Laravel Sanctum
-- Eloquent ORM
-- Models
-- Controllers, Resource Controllers
-- Services, Service Providers
-- Testing
+- Authentication with Laravel Breeze for site
+- Separate admin panel auth /admin/login using Laravel Filament.
+- Spatie permissions. Only user with role Admin has access to admin panel. See UserSeeder generate a few test users with role Admin
 
 ## Installation
 
@@ -23,6 +20,7 @@ Will use some features, such as:
 composer install
 php artisan key:generate
 php artisan migrate
+php artisan db:seed
 npm install
 php artisan serve
 vite

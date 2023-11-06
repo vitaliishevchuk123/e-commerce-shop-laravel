@@ -5,12 +5,13 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        $famousPeople = [
+        $employees = [
             [
                 'name' => 'Олександр Усик',
                 'email' => 'usik@gmail.com',
@@ -85,7 +86,9 @@ class UserSeeder extends Seeder
             ],
         ];
 
-        foreach ($famousPeople as $person) {
+        $adminRole = Role::create(['name' => 'Admin']);
+
+        foreach ($employees as $person) {
             User::factory()
                 ->state([
                     'name' => $person['name'],
@@ -98,7 +101,9 @@ class UserSeeder extends Seeder
                     'house_number' => $person['house_number'],
                     'zip_code' => $person['zip_code'],
                 ]), 'addresses')
-                ->create();
+                ->create()->each(function (User $user) use ($adminRole) {
+                    $user->assignRole($adminRole);
+                });
         }
 
         User::factory(100)->create()->each(function ($user) {
