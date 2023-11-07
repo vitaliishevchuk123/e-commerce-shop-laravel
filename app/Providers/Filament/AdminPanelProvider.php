@@ -41,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\FilamentInfoWidget::class,
             ])
             ->navigationGroups([
+                'Catalog',
                 'Administration',
             ])
             ->middleware([
