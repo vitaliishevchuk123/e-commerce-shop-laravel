@@ -13,7 +13,8 @@ Will use some features, such as:
 - Spatie permissions. Only user with role Admin has access to admin panel. See UserSeeder generate a few test users with role Admin
 
 ## Installation
-
+- Install Redis for horizon
+- Install DB (mysql/postgres)
 - Copy from .env.example and create a new .env file. In it we register a connection to the database
 - Run the commands:
 ```
@@ -23,6 +24,7 @@ php artisan migrate
 php artisan db:seed
 npm install
 php artisan serve
+php artisan horizon
 vite
 ```
 

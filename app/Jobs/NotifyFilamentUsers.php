@@ -15,13 +15,11 @@ class NotifyFilamentUsers implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        private readonly Notification $notification,
+        private Notification $notification,
     )
     {
         //
     }
-
-    public $tries = 3;
 
     /**
      * Execute the job.

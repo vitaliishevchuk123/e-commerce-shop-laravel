@@ -26,7 +26,7 @@ class UserObserver
                 )->markAsRead(),
             ]);
 
-        NotifyFilamentUsers::dispatch($notification)->onQueue('notification');
+        dispatch(new NotifyFilamentUsers($notification));
     }
 
     /**
