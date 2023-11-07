@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(\App\Models\User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('country_iso', 2);
-            $table->string('city', 255);
-            $table->string('street', 255);
+            $table->string('city', 60);
+            $table->string('street', 60);
             $table->string('house_number', 10);
             $table->string('zip_code', 15);
             $table->timestamps();
