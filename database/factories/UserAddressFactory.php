@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserAddressFactory extends Factory
 {
-    protected static ?string $password;
-
     public function definition(): array
     {
         return [
