@@ -10,7 +10,7 @@ return new class extends Migration {
 		Schema::create('attributes', function (Blueprint $table) {
 			$table->id();
 
-            $table->string('code', 50)->unique();
+            $table->string('code', 50)->unique()->index();
             $table->jsonb('name');
             $table->string('frontend_type', 15)->comment('checkbox, radio, text, textarea');
             $table->boolean('is_required')->default(false);

@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('name', 30);
             $table->string('slug', 30);
             $table->string('logo', 100)->nullable();
-            $table->integer('order');
+            $table->integer('order')->default(-1);
 
 			$table->timestamps();
             $table->softDeletes();

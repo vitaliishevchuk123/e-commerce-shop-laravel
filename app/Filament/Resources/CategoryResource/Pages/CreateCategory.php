@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\AttributeResource\Pages;
+namespace App\Filament\Resources\CategoryResource\Pages;
 
-use App\Filament\Resources\AttributeResource;
+use App\Filament\Resources\CategoryResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateAttribute extends CreateRecord
+class CreateCategory extends CreateRecord
 {
     use CreateRecord\Concerns\Translatable;
 
-    protected static string $resource = AttributeResource::class;
+    protected static string $resource = CategoryResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -18,5 +18,4 @@ class CreateAttribute extends CreateRecord
             Actions\LocaleSwitcher::make(),
         ];
     }
-
 }

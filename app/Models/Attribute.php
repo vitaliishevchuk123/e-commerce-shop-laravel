@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 
 class Attribute extends Model
 {
-    use HasFactory, SoftDeletes, HasTranslations;
+    use HasFactory, SoftDeletes, HasTranslations, HasSlug;
 
     public array $translatable = ['name'];
 
@@ -33,6 +35,13 @@ class Attribute extends Model
     public function values(): HasMany
     {
         return $this->hasMany(AttributeValue::class);
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('code');
     }
 
 }
