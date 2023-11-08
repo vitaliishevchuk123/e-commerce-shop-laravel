@@ -12,7 +12,7 @@ return new class extends Migration {
 
             $table->foreignIdFor(\App\Models\Attribute::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
 
-            $table->text('value');
+            $table->jsonb('value');
 
 			$table->timestamps();
 		});

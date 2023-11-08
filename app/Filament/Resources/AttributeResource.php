@@ -7,12 +7,15 @@ use App\Filament\Resources\AttributeResource\RelationManagers;
 use App\Models\Attribute;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
 class AttributeResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = Attribute::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-check-circle';

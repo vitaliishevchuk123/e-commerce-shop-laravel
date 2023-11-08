@@ -11,7 +11,7 @@ return new class extends Migration {
 			$table->id();
 
             $table->string('code', 50)->unique();
-            $table->string('name', 50);
+            $table->jsonb('name');
             $table->string('frontend_type', 15)->comment('checkbox, radio, text, textarea');
             $table->boolean('is_required')->default(false);
             $table->boolean('is_filterable')->default(false);

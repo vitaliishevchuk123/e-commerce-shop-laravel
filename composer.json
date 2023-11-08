@@ -11,6 +11,7 @@
         "php": "^8.1",
         "filament/filament": "^3.0",
         "filament/notifications": "^3.0-stable",
+        "filament/spatie-laravel-translatable-plugin": "^3.0-stable",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.11",
         "laravel/framework": "^10.10",
@@ -20,6 +21,7 @@
         "spatie/eloquent-sortable": "^4.0",
         "spatie/laravel-permission": "^6.0",
         "spatie/laravel-sluggable": "^3.5",
+        "spatie/laravel-translatable": "^6.5",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
