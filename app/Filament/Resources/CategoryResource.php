@@ -6,6 +6,7 @@ use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
@@ -36,13 +37,22 @@ class CategoryResource extends Resource
                     ->getOptionLabelFromRecordUsing(function (Model $record) {
                         return $record->name;
                     })
+                    ->saveRelationshipsUsing(function (Category $childNode, $state) {
+                        if (!$state) {
+                            return;
+                        }
+                        $parentNode = Category::find($state);
+                        $childNode->appendTo($parentNode)->save();
+                    })
+                    ->searchable()
+                    ->preload()
                 ,
                 Forms\Components\TextInput::make('name')
                     ->required(),
-                Forms\Components\TextInput::make('slug')
+                Forms\Components\TextInput::make('slug')->hiddenOn('create')
                     ->required()
                     ->maxLength(60),
-                Forms\Components\TextInput::make('order')
+                Forms\Components\TextInput::make('order')->hiddenOn('create')
                     ->required()
                     ->numeric()
                     ->default(0),

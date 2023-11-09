@@ -58,10 +58,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 SpatieLaravelTranslatablePlugin::make()
-                    ->defaultLocales(['uk', 'en', 'ru']),
+                    ->defaultLocales(['en', 'uk', 'ru']),
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])->databaseNotifications();
+            ])
+            ->databaseNotifications()
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }

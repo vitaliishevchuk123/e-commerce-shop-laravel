@@ -9,7 +9,7 @@ class CategorySeeder extends Seeder
 {
     public function run()
     {
-        $categories = [
+        $data = [
             [
                 'name' => [
                     'en' => 'Fitness',
@@ -105,8 +105,22 @@ class CategorySeeder extends Seeder
             ],
         ];
 
-        foreach ($categories as $category) {
-            Category::create($category);
+        foreach ($data as $arr) {
+            $category = Category::create($arr);
+            if (isset($arr['children'])) {
+                $this->createNonRootNodes($arr['children'], $category);
+            }
+        }
+    }
+
+    public function createNonRootNodes(array $data, Category $parentNode)
+    {
+        foreach ($data as $arr) {
+            $childNode = Category::make($arr)->appendTo($parentNode);
+            $childNode->save();
+            if (isset($arr['children'])) {
+                $this->createNonRootNodes($arr['children'], $childNode);
+            }
         }
     }
 }
