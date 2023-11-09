@@ -5,7 +5,7 @@
 
 ## About project
 
-Ecommerce Shop with Laravel/Inertia/VueJs and API's. 
+Ecommerce Shop with Laravel/Inertia/VueJs/Filament and API's. 
 
 Will use some features, such as:
 
