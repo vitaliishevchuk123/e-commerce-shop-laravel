@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
+use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -12,6 +13,7 @@ use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class CategoryResource extends Resource
@@ -32,11 +34,10 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('parent_id')
-                    ->relationship(name: 'parent', titleAttribute: 'name')
-                    ->getOptionLabelFromRecordUsing(function (Model $record) {
-                        return $record->name;
-                    })
+                SelectTree::make('parent_id')
+                    ->relationship(relationship: 'parent', titleAttribute: 'name', parentAttribute: 'parent_id')
+                    ->label('Parent')
+                    ->placeholder(__('Please select a category'))
                     ->saveRelationshipsUsing(function (Category $childNode, $state) {
                         if (!$state) {
                             return;
@@ -44,9 +45,9 @@ class CategoryResource extends Resource
                         $parentNode = Category::find($state);
                         $childNode->appendTo($parentNode)->save();
                     })
-                    ->searchable()
-                    ->preload()
-                ,
+                    ->withCount()
+                    ->enableBranchNode()
+                    ->searchable(),
                 Forms\Components\TextInput::make('name')
                     ->required(),
                 Forms\Components\TextInput::make('slug')->hiddenOn('create')
