@@ -12,7 +12,7 @@
         <div
             @class([
                 'item px-2' => true,
-                'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white rounded border-blue-500 transition duration-300' => $foundedId && $foundedId == $category->id,
+                'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white rounded border-blue-500 transition duration-300' => in_array($category->id, $foundedCatIds),
             ])
         >
             {{ $category->name }}
@@ -34,7 +34,7 @@
                 <livewire:category-item
                     :key="$child->id"
                     :category="$child"
-                    :founded-id="$foundedId"
+                    :founded-cat-ids="$foundedCatIds"
                     :search-parent-ids="in_array($child->id, $searchParentIds) ? $searchParentIds : []"
                     :is-open="in_array($child->id, $searchParentIds)"
                 />

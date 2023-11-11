@@ -10,10 +10,15 @@ class CategoryItem extends Component
     public Category $category;
     public $isOpen = false;
     public $isRoot = false;
-    public $foundedId = null;
+    public $foundedCatIds = [];
     public array $searchParentIds = [];
 
     protected $listeners = ['opedSearchedCategory', 'styleFounded'];
+
+    public function mount(Category $category)
+    {
+        $this->category = $category;
+    }
 
     public function render()
     {
@@ -22,7 +27,7 @@ class CategoryItem extends Component
 
     public function resetSearch()
     {
-        $this->foundedId = null;
+        $this->foundedCatIds = [];
         $this->searchParentIds = [];
     }
 
@@ -34,9 +39,9 @@ class CategoryItem extends Component
         }
     }
 
-    public function opedSearchedCategory(array $searchParentIds, int $foundedId)
+    public function opedSearchedCategory(array $searchParentIds, array $foundedCatIds)
     {
-        $this->foundedId = $foundedId;
+        $this->foundedCatIds = $foundedCatIds;
         $this->searchParentIds = $searchParentIds;
     }
 }
