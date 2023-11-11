@@ -1,4 +1,3 @@
 <x-filament-panels::page>
-    <input type="text" class="rounded" />
-    <livewire:tree-view/>
+    <livewire:category-tree/>
 </x-filament-panels::page>

@@ -11,15 +11,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
-use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\HasTranslatableSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 
 class Category extends Model implements TreeConfigurable, Sortable
 {
-    use HasFactory, NestedSetTrait, SoftDeletes, HasTranslations, HasSlug, SortableTrait;
+    use HasFactory, NestedSetTrait, SoftDeletes, HasTranslations, HasTranslatableSlug, SortableTrait;
 
-    public array $translatable = ['name'];
+    public array $translatable = ['name', 'slug'];
 
     protected static $unguarded = false;
 

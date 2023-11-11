@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->id();
             Trees\Migrate::columns($table, (new \App\Models\Category())->getTreeConfig());
             $table->jsonb('name');
-            $table->string('slug', 60)->unique()->index();
+            $table->json('slug');
             $table->integer('order')->default(1);
 
             $table->timestamps();

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\CategoryResource\Pages;
 
 use App\Filament\Resources\CategoryResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCategories extends ListRecords
@@ -17,6 +18,8 @@ class ListCategories extends ListRecords
         return [
             Actions\LocaleSwitcher::make(),
             Actions\CreateAction::make(),
+            Action::make('tree')
+                ->url(fn (): string => 'categories/tree')
         ];
     }
 
