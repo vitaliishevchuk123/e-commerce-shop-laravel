@@ -4,12 +4,12 @@ namespace App\Filament\Resources\CategoryResource\Pages;
 
 use App\Filament\Resources\CategoryResource;
 use Filament\Actions;
-use Filament\Actions\Action;
+use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCategories extends ListRecords
 {
-    use ListRecords\Concerns\Translatable;
+    use Translatable;
 
     protected static string $resource = CategoryResource::class;
 
@@ -18,15 +18,13 @@ class ListCategories extends ListRecords
         return [
             Actions\LocaleSwitcher::make(),
             Actions\CreateAction::make(),
-            Action::make('tree')
-                ->url(fn (): string => 'categories/tree')
         ];
     }
 
     protected function getHeaderWidgets(): array
     {
         return [
-            //
+            CategoryResource\Widgets\CategoryTree::class,
         ];
     }
 }
