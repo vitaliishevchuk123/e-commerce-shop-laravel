@@ -1,4 +1,5 @@
 <div>
+    <div class="m-4 text-red-600">asd</div>
     <form wire:submit.prevent="searchCategory" class="mb-4">
         <input type="text" wire:model.defer="search"
                placeholder="Search categories"
@@ -9,7 +10,13 @@
     </form>
     <ul>
         @foreach($categories as $category)
-            <livewire:category-item :key="$category->id" :is-root="true" :category="$category"/>
+            <livewire:category-item
+                :key="$category->id"
+                :is-root="true"
+                :category="$category"
+                :search-parent-ids="$searchParentIds"
+                :founded-cat-ids="$foundedCatIds"
+            />
         @endforeach
     </ul>
 </div>

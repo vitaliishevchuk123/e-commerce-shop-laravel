@@ -12,14 +12,14 @@
         <div
             @class([
                 'item px-2' => true,
-                'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white rounded border-blue-500 transition duration-300' => in_array($category->id, $foundedCatIds),
+                'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-white rounded border-blue-500 transition duration-300' => $this->isFounded,
             ])
         >
             {{ $category->name }}
         </div>
         @if($category->children->count())
             <button wire:click="toggleCategory({{ $category->id }})" class="btn btn-xs btn-secondary">
-                @if($isOpen)
+                @if($this->isOpen)
                     -
                 @else
                     +
@@ -27,16 +27,14 @@
             </button>
         @endif
     </div>
-
-    @if($isOpen && $category->children->count() || count($searchParentIds) && in_array($category->id, $searchParentIds))
+    @if($category->children->count() && $this->isOpen)
         <ul>
             @foreach($category->children as $child)
                 <livewire:category-item
                     :key="$child->id"
                     :category="$child"
+                    :search-parent-ids="$searchParentIds"
                     :founded-cat-ids="$foundedCatIds"
-                    :search-parent-ids="in_array($child->id, $searchParentIds) ? $searchParentIds : []"
-                    :is-open="in_array($child->id, $searchParentIds)"
                 />
             @endforeach
         </ul>

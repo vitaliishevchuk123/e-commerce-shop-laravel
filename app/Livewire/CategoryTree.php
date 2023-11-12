@@ -11,7 +11,8 @@ class CategoryTree extends Component
 {
     public Collection $categories;
     public string $search = '';
-    public Collection $foundCategories;
+    public array $searchParentIds = [];
+    public array $foundedCatIds = [];
 
     public function render()
     {
@@ -25,15 +26,15 @@ class CategoryTree extends Component
         if (!$this->search) {
             return;
         }
-        $this->foundCategories = Category::query()
+        $foundCategories = Category::query()
             ->where(DB::raw('lower(name)'), 'like', '%' . strtolower($this->search) . '%')
             ->get();
-        $parentIds = [];
-        $foundedCatIds = [];
-        foreach ($this->foundCategories as $cat) {
-            $parentIds = array_merge($parentIds, $cat->parents(0)->pluck('id')->toArray());
-            $foundedCatIds[] = $cat->id;
+        $this->searchParentIds = [];
+        $this->foundedCatIds = [];
+        foreach ($foundCategories as $cat) {
+            $this->searchParentIds = array_values(array_unique(array_merge($this->searchParentIds, $cat->parents(0)->pluck('id')->toArray())));
+            $this->foundedCatIds[] = $cat->id;
         }
-        $this->dispatch('opedSearchedCategory', $parentIds, $foundedCatIds);
+        $this->dispatch('opedSearchedCategory', $this->searchParentIds, $this->foundedCatIds);
     }
 }

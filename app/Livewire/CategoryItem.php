@@ -4,25 +4,32 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Category;
+use Livewire\Attributes\Computed;
 
 class CategoryItem extends Component
 {
     public Category $category;
-    public $isOpen = false;
     public $isRoot = false;
-    public $foundedCatIds = [];
+    public array $foundedCatIds = [];
     public array $searchParentIds = [];
 
     protected $listeners = ['opedSearchedCategory', 'styleFounded'];
 
-    public function mount(Category $category)
-    {
-        $this->category = $category;
-    }
-
     public function render()
     {
         return view('livewire.category-item');
+    }
+
+    #[Computed]
+    public function isOpen(): bool
+    {
+        return in_array($this->category->id, $this->searchParentIds);
+    }
+
+    #[Computed]
+    public function isFounded(): bool
+    {
+        return in_array($this->category->id, $this->foundedCatIds);
     }
 
     public function resetSearch()
