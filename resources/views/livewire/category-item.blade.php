@@ -19,7 +19,7 @@
         </div>
         @if($category->children->count())
             <button wire:click="toggleCategory({{ $category->id }})" class="btn btn-xs btn-secondary">
-                @if($this->isOpen)
+                @if($isOpen)
                     -
                 @else
                     +
@@ -27,7 +27,7 @@
             </button>
         @endif
     </div>
-    @if($category->children->count() && $this->isOpen)
+    @if($category->children->count() && $isOpen)
         <ul>
             @foreach($category->children as $child)
                 <livewire:category-item

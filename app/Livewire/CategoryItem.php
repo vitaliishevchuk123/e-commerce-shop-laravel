@@ -9,7 +9,8 @@ use Livewire\Attributes\Computed;
 class CategoryItem extends Component
 {
     public Category $category;
-    public $isRoot = false;
+    public bool $isOpen = false;
+    public bool $isRoot = false;
     public array $foundedCatIds = [];
     public array $searchParentIds = [];
 
@@ -18,12 +19,6 @@ class CategoryItem extends Component
     public function render()
     {
         return view('livewire.category-item');
-    }
-
-    #[Computed]
-    public function isOpen(): bool
-    {
-        return in_array($this->category->id, $this->searchParentIds);
     }
 
     #[Computed]
@@ -50,6 +45,7 @@ class CategoryItem extends Component
     {
         $this->foundedCatIds = $foundedCatIds;
         $this->searchParentIds = $searchParentIds;
+        $this->isOpen = in_array($this->category->id, $this->searchParentIds);
     }
 }
 
