@@ -1,7 +1,7 @@
 <li @style([
     'margin-left: 2em' => !$isRoot,
 ]) x-data="{ isHovered: false }">
-    <div class="flex flex-row items-center" @mouseover="isHovered = true" @mouseout="isHovered = false">
+    <div class="flex flex-row items-center text-sm" @mouseover="isHovered = true" @mouseout="isHovered = false">
         <div class="icon-wrapper">
             <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                  aria-hidden="true">

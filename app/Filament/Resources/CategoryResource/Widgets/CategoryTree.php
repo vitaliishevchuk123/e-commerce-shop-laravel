@@ -6,7 +6,6 @@ use Filament\Widgets\Widget;
 
 class CategoryTree extends Widget
 {
-    protected int | string | array $columnSpan = 3;
     protected static string $view = 'filament.resources.category-resource.widgets.category-tree';
 
 }
