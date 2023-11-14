@@ -1,5 +1,5 @@
 <div>
-    <h2 class="text-2xl font-semibold mb-4">Tree <img src="im"></h2>
+    <h2 class="text-2xl font-semibold mb-4">Tree</h2>
     <form wire:submit.prevent="searchCategory" class="mb-4 flex align-center gap-2">
         <input type="text" wire:model.defer="search"
                placeholder="Search categories"

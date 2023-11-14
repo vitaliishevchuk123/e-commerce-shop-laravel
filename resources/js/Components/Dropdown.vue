@@ -68,10 +68,15 @@ const open = ref(false);
                 style="display: none"
                 @click="open = false"
             >
-                <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
+                <div class="rounded-md ring-1 ring-black ring-opacity-5 main-bg-red" :class="contentClasses">
                     <slot name="content" />
                 </div>
             </div>
         </Transition>
     </div>
 </template>
+
+<style scoped lang="scss">
+@import "./resources/scss/_variables.scss";
+
+</style>

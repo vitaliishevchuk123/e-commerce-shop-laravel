@@ -1,14 +1,13 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-</script>
+import {Head} from '@inertiajs/vue3';
+import MainLayout from "@/Layouts/MainLayout.vue";</script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Dashboard"/>
 
-    <AuthenticatedLayout>
+    <MainLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-blue-800 leading-tight">Dashboard</h2>
+
         </template>
 
         <div class="py-12">
@@ -18,5 +17,7 @@ import { Head } from '@inertiajs/vue3';
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </MainLayout>
 </template>
+<style scoped lang="less">
+</style>
