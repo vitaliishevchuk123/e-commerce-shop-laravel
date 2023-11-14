@@ -18,7 +18,6 @@ use Inertia\Inertia;
 
 Route::controller(IndexController::class)->group(function () {
     Route::get('/', 'index')->name('home');
-    Route::post('/about', 'about');
 });
 
 Route::get('/dashboard', function () {

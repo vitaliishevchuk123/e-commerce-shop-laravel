@@ -9,9 +9,6 @@ defineProps({ title: String })
 <template>
     <Head :title="title" />
     <MainLayout>
-        <template #header>
-
-        </template>
         <h1>{{ title }}</h1>
         <p>Hello, welcome to your first Inertia app!</p>
     </MainLayout>
