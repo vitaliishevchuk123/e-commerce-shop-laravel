@@ -1,6 +1,7 @@
 <script setup>
 import { Head } from '@inertiajs/vue3'
 import MainLayout from "@/Layouts/MainLayout.vue";
+import MainSlider from "@/Components/MainSlider.vue";
 
 defineProps({ title: String })
 
@@ -9,8 +10,7 @@ defineProps({ title: String })
 <template>
     <Head :title="title" />
     <MainLayout>
-        <h1>{{ title }}</h1>
-        <p>Hello, welcome to your first Inertia app!</p>
+        <MainSlider/>
     </MainLayout>
 </template>
 

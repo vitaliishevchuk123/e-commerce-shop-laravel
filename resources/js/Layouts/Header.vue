@@ -31,7 +31,7 @@ function logout() {
                     <div class="flex">
                         <!-- Logo -->
                         <div class="flex items-center mr-6">
-                            <Link :href="route('dashboard')">
+                            <Link :href="route('home')">
                                 <ApplicationLogo
                                     class="block h-9 w-auto fill-current text-gray-800"
                                 />
@@ -222,13 +222,13 @@ function logout() {
                     <h2 class="font-semibold text-xl text-white leading-tight">Каталог</h2>
                 </div>
                 <div class="hidden sm:grid sm:grid-cols-3 md:grid-cols-4 sm:gap-2 lg:flex lg:items-center lg:gap-6">
-                    <NavLink><span class="text-white">Бренди</span></NavLink>
-                    <NavLink><span class="text-white">Сервіс</span></NavLink>
-                    <NavLink><span class="text-white">Послуги</span></NavLink>
-                    <NavLink><span class="text-white">Підтримка</span></NavLink>
-                    <NavLink><span class="text-white">Про компанію</span></NavLink>
-                    <NavLink><span class="text-white">Блог</span></NavLink>
-                    <NavLink><span class="text-white">Де купити</span></NavLink>
+                    <NavLink href="#"><span class="text-white">Бренди</span></NavLink>
+                    <NavLink href="#"><span class="text-white">Сервіс</span></NavLink>
+                    <NavLink href="#"><span class="text-white">Послуги</span></NavLink>
+                    <NavLink href="#"><span class="text-white">Підтримка</span></NavLink>
+                    <NavLink href="#"><span class="text-white">Про компанію</span></NavLink>
+                    <NavLink href="#"><span class="text-white">Блог</span></NavLink>
+                    <NavLink href="#"><span class="text-white">Де купити</span></NavLink>
                 </div>
                 <div class="flex items-center gap-6">
                     <IconCounter href="#" :count="15">
