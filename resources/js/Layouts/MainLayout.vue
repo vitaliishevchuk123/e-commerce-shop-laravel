@@ -19,8 +19,8 @@ import Header from "@/Layouts/Header.vue";
 @import "./resources/scss/_variables.scss";
 
 .main-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-rows: auto 1fr auto; /* автоматична висота хедера та футера, решта простір на контент */
+    min-height: 100vh; /* забезпечення повноекранного розміщення */
 }
 </style>

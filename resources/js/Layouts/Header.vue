@@ -5,6 +5,8 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link} from '@inertiajs/vue3';
 import {ref} from "vue";
+import NavLink from "@/Components/NavLink.vue";
+import IconCounter from "@/Components/IconCounter.vue";
 
 const showingNavigationDropdown = ref(false);
 
@@ -37,17 +39,11 @@ function logout() {
                         </div>
                         <!-- Navigation Links -->
                         <div class="hidden md:flex md:items-center md:gap-6">
-                            <a :href="route('home')"
-                               :class="{[activeClass]: isActive('home')}"
-                               class="nav-link hover:text-white">
+                            <NavLink :href="route('home')"
+                                     :active="route().current('home')"
+                            >
                                 Головна
-                            </a>
-                            <a v-if="$page.props.auth.user"
-                               :href="route('profile.edit')"
-                               :class="{[activeClass]: isActive('profile.edit')}"
-                               class="nav-link hover:text-white">
-                                Особистий кабінет
-                            </a>
+                            </NavLink>
                         </div>
                     </div>
 
@@ -88,21 +84,22 @@ function logout() {
                             </Dropdown>
                         </div>
                         <template v-else>
-                            <a
-                                v-if="$page.props.canRegister"
-                                :href="route('register')"
-                                class="nav-link nav-link--white"
-                            >Зареєструватись
-                            </a>
-                            <a v-if="$page.props.canLogin"
-                               :href="route('login')"
-                               class="text-white">
-                                    <span
-                                        class="nav-link nav-link--white mr-1"
-                                    >Увійти
+                            <NavLink v-if="$page.props.canRegister"
+                                     :href="route('register')"
+                                     :active="route().current('register')"
+                                     class="nav-link nav-link--white">
+                                Зареєструватись
+                            </NavLink>
+                            <NavLink v-if="$page.props.canLogin"
+                                     :active="route().current('login')"
+                                     :href="route('login')"
+                                     class="nav-link nav-link--white">
+                                <span
+                                    class="mr-1"
+                                >Увійти
                                     </span>
                                 <i class="fa-solid fa-user"></i>
-                            </a>
+                            </NavLink>
                         </template>
                     </div>
 
@@ -145,8 +142,22 @@ function logout() {
                 class="md:hidden"
             >
                 <div class="pt-2 pb-3 space-y-1">
-                    <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                        Dashboard
+                    <ResponsiveNavLink :href="route('home')" :active="route().current('home')">
+                        Головна
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink v-if="$page.props.canRegister"
+                                       :active="route().current('register')"
+                                       :href="route('register')">
+                        Зареєструватись
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink v-if="$page.props.canLogin"
+                                       :active="route().current('login')"
+                                       :href="route('login')">
+                                <span
+                                    class="mr-1"
+                                >Увійти
+                                    </span>
+                        <i class="fa-solid fa-user"></i>
                     </ResponsiveNavLink>
                 </div>
 
@@ -170,8 +181,8 @@ function logout() {
         </nav>
         <!-- Page Heading -->
         <div class="bg-dark-site shadow">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <div class="catalog-button">
+            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between">
+                <div class="catalog-button mr-6">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <g clip-path="url(#clip0_776_27)">
                             <path
@@ -210,6 +221,23 @@ function logout() {
                     </svg>
                     <h2 class="font-semibold text-xl text-white leading-tight">Каталог</h2>
                 </div>
+                <div class="hidden sm:grid sm:grid-cols-3 md:grid-cols-4 sm:gap-2 lg:flex lg:items-center lg:gap-6">
+                    <NavLink><span class="text-white">Бренди</span></NavLink>
+                    <NavLink><span class="text-white">Сервіс</span></NavLink>
+                    <NavLink><span class="text-white">Послуги</span></NavLink>
+                    <NavLink><span class="text-white">Підтримка</span></NavLink>
+                    <NavLink><span class="text-white">Про компанію</span></NavLink>
+                    <NavLink><span class="text-white">Блог</span></NavLink>
+                    <NavLink><span class="text-white">Де купити</span></NavLink>
+                </div>
+                <div class="flex items-center gap-6">
+                    <IconCounter href="#" :count="15">
+                        <img src="img/front/heart.svg" alt="heart">
+                    </IconCounter>
+                    <IconCounter href="#" :count="2">
+                        <img src="img/front/cart.svg" alt="cart">
+                    </IconCounter>
+                </div>
                 <slot name="header"/>
             </div>
         </div>
@@ -218,6 +246,7 @@ function logout() {
 
 <style scoped lang="scss">
 @import "./resources/scss/_variables.scss";
+
 .bg-dark-site {
     background: $main-dark;
 }
@@ -252,6 +281,10 @@ function logout() {
     font-style: normal;
     font-weight: 400;
     line-height: 140%;
+
+    &:hover {
+        color: #FFF;
+    }
 
     &--white {
         color: #FFF;

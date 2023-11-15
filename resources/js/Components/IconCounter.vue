@@ -10,25 +10,59 @@ const props = defineProps({
     active: {
         type: Boolean,
     },
+    count: {
+        type: Number,
+    },
 });
 
 const classes = computed(() =>
     props.active
-        ? 'nav-link_active flex items-center justify-center'
-        : 'nav-link flex items-center justify-center'
+        ? 'nav-link_active'
+        : 'nav-link'
 );
 </script>
 
 <template>
     <Link :href="href" :class="classes">
-        <slot/>
+        <div class="counter-box">
+            <div class="counter">
+                <div class="count">{{ count }}</div>
+            </div>
+            <slot/>
+        </div>
     </Link>
 </template>
 
 <style scoped lang="scss">
+
+.counter-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 30px;
+    height: 30px;
+}
+
+.counter {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #F53B49;
+    width: 18px;
+    height: 18px;
+    .count {
+        color: white;
+        font-size: 10px;
+    }
+}
 .nav-link_active {
     display: flex;
-    padding: 0.4em 0.8em;
     align-items: flex-start;
     color: white;
     font-size: 14px;
@@ -39,7 +73,6 @@ const classes = computed(() =>
 
 .nav-link {
     display: flex;
-    padding: 0.4em 0.8em;
     align-items: flex-start;
     color: #909CB5;
     font-size: 14px;
