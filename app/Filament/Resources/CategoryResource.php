@@ -7,10 +7,12 @@ use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 
 class CategoryResource extends Resource
@@ -50,6 +52,10 @@ class CategoryResource extends Resource
                 Forms\Components\TextInput::make('slug')->hiddenOn('create')
                     ->required()
                     ->maxLength(60),
+                FileUpload::make('image')
+                    ->image()
+                    ->directory('categories')
+                    ->imageEditor(),
                 Forms\Components\TextInput::make('order')->hiddenOn('create')
                     ->required()
                     ->numeric()
@@ -65,6 +71,8 @@ class CategoryResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
+                ImageColumn::make('image')
+                    ->defaultImageUrl(url('img/no-img-available.png')),
                 Tables\Columns\TextColumn::make('order')
                     ->numeric()
                     ->sortable(),
