@@ -31,4 +31,12 @@ class Brand extends Model implements Sortable
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
+
+    public function getImgUrl(): string
+    {
+        if ($this->logo) {
+            return url('storage/' . $this->logo);
+        }
+        return url('img/no-img-available.png');
+    }
 }

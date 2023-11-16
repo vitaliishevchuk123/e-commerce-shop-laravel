@@ -23,7 +23,7 @@ class Category extends Model implements TreeConfigurable, Sortable
 
     protected static $unguarded = false;
 
-    public $fillable = ['name', 'slug', 'order'];
+    public $fillable = ['name', 'slug', 'order', 'image'];
 
     protected static function buildTreeConfig(): Base
     {
@@ -61,5 +61,13 @@ class Category extends Model implements TreeConfigurable, Sortable
         return SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
+    }
+
+    public function getImgUrl(): string
+    {
+        if ($this->image) {
+            return url('storage/' . $this->image);
+        }
+        return url('img/no-img-available.png');
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->id();
             Trees\Migrate::columns($table, (new \App\Models\Category())->getTreeConfig());
             $table->jsonb('name');
+            $table->string('image', 100)->nullable();
             $table->json('slug');
             $table->integer('order')->default(1);
 

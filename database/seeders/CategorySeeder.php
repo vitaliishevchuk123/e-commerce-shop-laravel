@@ -2,14 +2,104 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\DirManager;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
 {
-    public function run()
+    public function run(DirManager $dirManager)
     {
         $data = [
+            [
+                'name' => [
+                    'en' => 'Exercise equipment for home',
+                    'uk' => 'Тренажери для дому',
+                    'ru' => 'Тренажеры для дома',
+                ],
+                'children' => [
+                    [
+                        'name' => [
+                            'en' => 'Treadmills',
+                            'uk' => 'Бігові доріжки',
+                            'ru' => 'Беговые дорожки',
+                        ],
+                        'image' => 'categories/treadmills.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Elliptical trainers',
+                            'uk' => 'Еліптичні тренажери',
+                            'ru' => 'Эллиптические тренажеры',
+                        ],
+                        'image' => 'categories/elliptical-trainers.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Exercise bikes',
+                            'uk' => 'Велотренажери',
+                            'ru' => 'Велотренажеры',
+                        ],
+                        'image' => 'categories/exercise-bikes.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Ski simulators',
+                            'uk' => 'Гірськолижні тренажери',
+                            'ru' => 'Горнолыжные тренажеры',
+                        ],
+                        'image' => 'categories/ski-simulators.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Strength training equipment',
+                            'uk' => 'Силові тренажери',
+                            'ru' => 'Силовые тренажеры',
+                        ],
+                        'image' => 'categories/strength-training-equipment.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Rowing machines',
+                            'uk' => 'Гребні тренажери',
+                            'ru' => 'Гребные тренажеры',
+                        ],
+                        'image' => 'categories/rowing-machines.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Trampolines',
+                            'uk' => 'Батути',
+                            'ru' => 'Батуты',
+                        ],
+                        'image' => 'categories/trampolines.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Gaming tables',
+                            'uk' => 'Ігрові столи',
+                            'ru' => 'Игровые столы',
+                        ],
+                        'image' => 'categories/gaming-tables.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Massage chairs',
+                            'uk' => 'Масажні крісла',
+                            'ru' => 'Массажные кресла',
+                        ],
+                        'image' => 'categories/massage-chairs.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Fitness accessories',
+                            'uk' => 'Фітнес аксесуари',
+                            'ru' => 'Фитнес аксессуары',
+                        ],
+                        'image' => 'categories/fitness-accessories.png',
+                    ],
+                ],
+            ],
             [
                 'name' => [
                     'en' => 'Fitness',
@@ -111,6 +201,11 @@ class CategorySeeder extends Seeder
                 $this->createNonRootNodes($arr['children'], $category);
             }
         }
+
+        $dirManager->copyFiles(
+            public_path('img/categories'),
+            storage_path('app/public/categories')
+        );
     }
 
     public function createNonRootNodes(array $data, Category $parentNode)

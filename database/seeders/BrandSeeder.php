@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\DirManager;
 use App\Models\Brand;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 
 class BrandSeeder extends Seeder
 {
-    public function run()
+    public function run(DirManager $dirManager)
     {
         $brandsData = [
             [
@@ -80,20 +80,9 @@ class BrandSeeder extends Seeder
             ]);
         }
 
-        $this->copyFiles();
-    }
-
-    public function copyFiles()
-    {
-        $sourcePath = public_path('img/brands');
-        $destinationPath = storage_path('app/public/brands');
-
-        $files = File::files($sourcePath);
-
-        foreach ($files as $file) {
-            $filename = $file->getFilename();
-            File::copy($sourcePath . '/' . $filename, $destinationPath . '/' . $filename);
-        }
-
+        $dirManager->copyFiles(
+            public_path('img/brands'),
+            storage_path('app/public/brands')
+        );
     }
 }
