@@ -13,6 +13,71 @@ class CategorySeeder extends Seeder
         $data = [
             [
                 'name' => [
+                    'en' => 'For fitness clubs',
+                    'uk' => 'Для фітнес клубів',
+                    'ru' => 'Для фитнес клубов',
+                ],
+                'children' => [
+                    [
+                        'name' => [
+                            'en' => 'Professional cardio equipment',
+                            'uk' => 'Професійні кардіотренажери',
+                            'ru' => 'Профессиональные кардиотренажеры',
+                        ],
+                        'image' => 'categories/professional-cardio-equipment.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Weight block simulators',
+                            'uk' => 'Вантажоблочні тренажери',
+                            'ru' => 'Грузоблочные тренажеры',
+                        ],
+                        'image' => 'categories/weight-block-simulators.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Free weights',
+                            'uk' => 'Тренажери на вільних вагах',
+                            'ru' => 'Тренажеры на свободных весах',
+                        ],
+                        'image' => 'categories/free-weights.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Functional training',
+                            'uk' => 'Функціональний тренінг',
+                            'ru' => 'Функциональный тренинг',
+                        ],
+                        'image' => 'categories/functional-training.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Wellness, SPA, Massage',
+                            'uk' => 'Wellness, СПА, Масаж',
+                            'ru' => 'Wellness, СПА, Массаж',
+                        ],
+                        'image' => 'categories/wellness-spa-massage.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Sports medicine and rehabilitation',
+                            'uk' => 'Спортивна медицина та реабілітація',
+                            'ru' => 'Спортивная медицина и реабилитация',
+                        ],
+                        'image' => 'categories/sports-medicine-rehabilitation.png',
+                    ],
+                    [
+                        'name' => [
+                            'en' => 'Free weights',
+                            'uk' => 'Вільна вага',
+                            'ru' => 'Свободные веса',
+                        ],
+                        'image' => 'categories/free-weights-2.png',
+                    ],
+                ],
+            ],
+            [
+                'name' => [
                     'en' => 'Exercise equipment for home',
                     'uk' => 'Тренажери для дому',
                     'ru' => 'Тренажеры для дома',

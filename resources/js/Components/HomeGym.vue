@@ -1,5 +1,6 @@
 <script setup>
 import BlockTitle from "@/Components/BlockTitle.vue";
+import DefaultButton from "@/Components/DefaultButton.vue";
 
 defineProps({
         categories: Array,
@@ -8,9 +9,9 @@ defineProps({
 </script>
 
 <template>
-    <div class="max-w-7xl mx-auto p-4 mb-6">
+    <div v-if="categories.length" class="max-w-7xl mx-auto p-4 mb-6">
         <BlockTitle title="Тренажери для дому"/>
-        <div class="grid grid-rows-6 grid-cols-2 gap-4 lg:grid-rows-3 lg:grid-cols-4 lg:gap-8">
+        <div class="grid grid-rows-6 grid-cols-2 gap-4 lg:grid-rows-3 lg:grid-cols-4 lg:gap-8 mb-6">
             <div
                 v-for="(category, index) in categories"
                 :key="index"
@@ -35,6 +36,7 @@ defineProps({
                 />
             </div>
         </div>
+        <DefaultButton text="Всі категорії"/>
     </div>
 
 </template>

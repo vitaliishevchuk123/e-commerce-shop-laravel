@@ -18,6 +18,7 @@ class IndexController extends Controller
             'title' => 'Home',
             'brands' => BrandResource::collection($brands),
             'homeGymCats' => CategoryResource::collection($catRepository->homeGymCats(10)),
+            'fitnessClubGymCats' => CategoryResource::collection($catRepository->fitnessClubGymCats(7)),
         ]);
     }
 }

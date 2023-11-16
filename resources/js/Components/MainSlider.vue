@@ -1,6 +1,7 @@
 <script setup>
 import 'flowbite';
 import {ref, onMounted} from "vue";
+import DefaultButton from "@/Components/DefaultButton.vue";
 const mainCarousel = ref(null)
 onMounted(() => {
     // mainCarousel.focus()
@@ -25,9 +26,7 @@ onMounted(() => {
                             Біг з нульовим ударним навантаженням на суглоби
                         </div>
                         <div class="slider-button-wrapper">
-                            <button class="slider-button">
-                                Дізнатись більше
-                            </button>
+                            <DefaultButton text="Дізнатись більше"/>
                         </div>
                     </div>
                 </div>
@@ -46,9 +45,7 @@ onMounted(() => {
                             Для підготовки до марафону
                         </div>
                         <div class="slider-button-wrapper">
-                            <button class="slider-button">
-                                Дізнатись більше
-                            </button>
+                            <DefaultButton text="Дізнатись більше"/>
                         </div>
                     </div>
                 </div>
@@ -102,27 +99,6 @@ onMounted(() => {
     text-transform: uppercase;
 }
 
-.slider-button {
-    display: flex;
-    padding: 0.5em 1em;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-
-    border-radius: 4px;
-    border: 1px solid #F53B49;
-
-    color: #F53B49;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-
-    &:hover {
-        background: white;
-    }
-}
-
 .slider-text-wrapper {
     width: 250px;
 }
@@ -141,11 +117,6 @@ onMounted(() => {
         font-size: 22px;
     }
 
-    .slider-button {
-        padding: 12px 20px 13px 20px;
-        font-size: 14px;
-    }
-
     .slider-text-wrapper {
         width: 400px;
     }
@@ -160,11 +131,6 @@ onMounted(() => {
         font-size: 24px;
     }
 
-    .slider-button {
-        padding: 12px 20px 13px 20px;
-        font-size: 14px;
-    }
-
     .slider-text-wrapper {
         width: 450px;
     }
@@ -177,11 +143,6 @@ onMounted(() => {
 @media (min-width: 1280px) {
     .slider-title {
         font-size: 24px;
-    }
-
-    .slider-button {
-        padding: 12px 20px 13px 20px;
-        font-size: 14px;
     }
 
     .slider-text-wrapper {
