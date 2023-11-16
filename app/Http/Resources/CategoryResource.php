@@ -20,6 +20,7 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'slug' => $this->slug,
             'image' => $this->getImgUrl(),
+            'children' => CategoryResource::collection($this->whenLoaded('children')),
             "order" => $this->order,
         ];
     }
