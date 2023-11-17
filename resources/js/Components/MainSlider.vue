@@ -15,7 +15,7 @@ onMounted(() => {
             <!-- Item 1 -->
             <div class="hidden duration-700 ease-in-out" data-carousel-item="active">
                 <div class="absolute inset-0 slider-bg"></div> <!-- Транспарентна заливка -->
-                <img src="img/front/slider/girl-run.png"
+                <img src="/img/front/slider/girl-run.png"
                      class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 -right-24 xl:right-0 h-full" alt="...">
                 <div class="relative max-w-7xl mx-auto">
                     <div class="slider-text-wrapper absolute grid grid-cols-1 gap-2 top-4 left-4 xl:top-10 xl:left-10">
@@ -34,7 +34,7 @@ onMounted(() => {
             <!-- Item 2 -->
             <div class="hidden duration-700 ease-in-out" data-carousel-item>
                 <div class="absolute inset-0 slider-bg"></div> <!-- Транспарентна заливка -->
-                <img src="img/front/slider/man-run.png"
+                <img src="/img/front/slider/man-run.png"
                      class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 -right-24 xl:right-0 h-full" alt="...">
                 <div class="relative max-w-7xl mx-auto">
                     <div class="slider-text-wrapper absolute grid grid-cols-1 gap-2 top-4 left-4 xl:top-10 xl:left-10">

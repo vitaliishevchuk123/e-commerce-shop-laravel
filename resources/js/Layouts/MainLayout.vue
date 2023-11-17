@@ -14,7 +14,6 @@ import CatalogMenuModal from "@/Components/CatalogMenuModal.vue";
         </main>
         <Footer/>
     </div>
-    <CatalogMenuModal/>
 </template>
 
 <style scoped lang="scss">

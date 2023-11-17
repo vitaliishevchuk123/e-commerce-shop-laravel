@@ -36,16 +36,16 @@ import SocialIcon from "@/Components/SocialIcon.vue";</script>
                 </SocialIcons>
                 <PaymentIcons>
                     <PaymentIcon>
-                        <img src="img/front/payments/visa.svg" alt="visa">
+                        <img src="/img/front/payments/visa.svg" alt="visa">
                     </PaymentIcon>
                     <PaymentIcon>
-                        <img src="img/front/payments/mastercard.svg" alt="mastercard">
+                        <img src="/img/front/payments/mastercard.svg" alt="mastercard">
                     </PaymentIcon>
                     <PaymentIcon>
-                        <img src="img/front/payments/symbols.svg" alt="symbols">
+                        <img src="/img/front/payments/symbols.svg" alt="symbols">
                     </PaymentIcon>
                     <PaymentIcon>
-                        <img src="img/front/payments/paypal.svg" alt="paypal">
+                        <img src="/img/front/payments/paypal.svg" alt="paypal">
                     </PaymentIcon>
                 </PaymentIcons>
             </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,10 @@ use Inertia\Inertia;
 
 Route::controller(IndexController::class)->group(function () {
     Route::get('/', 'index')->name('home');
+});
+
+Route::controller(CatalogController::class)->group(function () {
+    Route::get('/catalog/{slug}', 'index')->name('catalog');
 });
 
 Route::get('/dashboard', function () {

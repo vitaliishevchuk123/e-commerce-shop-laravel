@@ -23,7 +23,9 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "flowbite-vue": "^0.1.0",
         "less": "^4.2.0",
+        "swiper": "^11.0.4",
         "tw-elements": "^1.0.0"
     }
 }
