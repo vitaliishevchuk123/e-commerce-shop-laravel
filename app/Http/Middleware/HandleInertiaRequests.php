@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Http\Resources\CategoryResource;
 use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -43,13 +44,26 @@ class HandleInertiaRequests extends Middleware
                 'message' => $request->session()->get('message'),
                 'errors' => $request->session()->get('errors'),
             ],
-            'ziggy' => fn () => [
+            'ziggy' => fn() => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'catalogRootCats' => CategoryResource::collection($catRepository->catalogRootCats()),
+            'locale' => function () {
+                return app()->getLocale();
+            },
+            'language' => function () {
+                $filePath = base_path('/lang/' . app()->getLocale() . '.json');
+                if (!File::exists($filePath)) {
+                    return [];
+                }
+                return json_decode(
+                    File::get($filePath),
+                    true
+                );
+            },
         ];
     }
 }

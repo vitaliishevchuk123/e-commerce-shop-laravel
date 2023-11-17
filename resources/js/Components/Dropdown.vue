@@ -8,7 +8,7 @@ const props = defineProps({
     },
     width: {
         type: String,
-        default: '48',
+        default: '20',
     },
     contentClasses: {
         type: String,
@@ -27,6 +27,7 @@ onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 
 const widthClass = computed(() => {
     return {
+        20: 'w-20',
         48: 'w-48',
     }[props.width.toString()];
 });
@@ -40,7 +41,6 @@ const alignmentClasses = computed(() => {
         return 'origin-top';
     }
 });
-
 const open = ref(false);
 </script>
 

@@ -17,6 +17,11 @@ use Inertia\Inertia;
 |
 */
 
+Route::get('/language/{locale}', function ($language) {
+    session()->put('locale', $language);
+    return redirect()->back();
+})->name('language');
+
 Route::controller(IndexController::class)->group(function () {
     Route::get('/', 'index')->name('home');
 });
