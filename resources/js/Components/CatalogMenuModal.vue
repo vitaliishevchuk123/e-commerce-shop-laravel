@@ -5,8 +5,14 @@ import {usePage} from '@inertiajs/vue3'
 const page = usePage();
 
 const selectedCategory = ref(null);
+const isMobileOpenCat = ref(true);
 
 function showChildren(category) {
+    if (screen.width > 1024 || selectedCategory.value !== category) {
+        isMobileOpenCat.value = true;
+    } else {
+        isMobileOpenCat.value = !isMobileOpenCat.value;
+    }
     selectedCategory.value = category;
 }
 
@@ -35,8 +41,8 @@ onMounted(() => {
 
                     >
                         <div :class="{
-                            'text-lg  p-1 pl-2': true,
-                            'bg-gray-100': selectedCategory == category,
+                            'text-lg  p-1 pl-2 cursor-pointer': true,
+                            'bg-gray-100': selectedCategory == category && isMobileOpenCat,
                             }"
                              @click="showChildren(category)"
                         >
@@ -45,9 +51,8 @@ onMounted(() => {
                                 <i class="fa-solid fa-arrow-right"></i>
                             </span>
                         </div>
-                        <div
-                            class="grid lg:hidden children-cats lg:w-full lg:m-6 lg:grid lg:grid-cols-3 lg:grid-rows-4 lg:gap-4"
-                            v-if="selectedCategory == category">
+                        <div class="grid lg:hidden children-cats lg:w-full lg:m-6 lg:grid lg:grid-cols-3 lg:grid-rows-4 lg:gap-4"
+                            v-if="selectedCategory == category && isMobileOpenCat">
                             <div v-for="child in selectedCategory.children" :key="'mob' + child.id"
                                  class="child-cat flex items-center gap-2">
                                 <div class="w-20 h-20 flex items-center">
