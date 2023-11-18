@@ -1,32 +1,76 @@
 <script setup>
-import 'flowbite';
-import {ref, onMounted} from "vue";
+import {onMounted} from "vue";
 import DefaultButton from "@/Components/DefaultButton.vue";
 
-defineProps({
+let slides = null;
+let btnRight = null;
+let btnLeft = null;
+
+const props = defineProps({
         sliders: Array,
     }
 )
 
-const mainCarousel = ref(null)
+let currSlide = 0;
+const maxSlides = props.sliders.length;
+
 onMounted(() => {
-    // mainCarousel.focus()
+    slides = document.querySelectorAll(".slide");
+    btnRight = document.querySelector(".slider__btn--right");
+    btnLeft = document.querySelector(".slider__btn--left");
+
+    btnRight.addEventListener("click", nextSlide);
+    btnLeft.addEventListener("click", prevSlide);
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowLeft") {
+            prevSlide();
+        }
+        if (e.key === "ArrowRight") {
+            nextSlide();
+        }
+    });
+
+    goToSlide(0);
+    setInterval(() => {
+        nextSlide();
+    }, 3000);
 })
+
+function goToSlide(slide) {
+    slides.forEach(function (s, i) {
+        let adjustedIndex = i - slide;
+
+        if (adjustedIndex < 0) {
+            adjustedIndex += maxSlides;
+        }
+
+        s.style.transform = `translateX(${100 * adjustedIndex}%)`;
+    });
+}
+
+function nextSlide() {
+    currSlide = (currSlide + 1) % maxSlides;
+    goToSlide(currSlide);
+}
+
+function prevSlide() {
+    currSlide = (currSlide - 1 + maxSlides) % maxSlides;
+    goToSlide(currSlide);
+}
+
 </script>
 
 <template>
-    <div v-if="sliders.length" ref="mainCarousel" class="relative w-full p-8" data-carousel="slide" data-carousel-interval="3000">
+    <div v-if="sliders.length" ref="mainCarousel" class="slider relative w-full p-8">
         <!-- Carousel wrapper -->
         <div class="relative h-56 overflow-hidden rounded-lg md:h-72 xl:h-96">
-            <!-- Item 1 -->
+            <!-- Item -->
             <div v-for="(slider, index) in sliders"
-                class="hidden duration-700 ease-in-out"
-                data-carousel-item="active"
+                 class="slide duration-700 ease-in-out"
             >
                 <!-- Транспарентна заливка -->
-                <div class="absolute inset-0 slider-bg"></div>
-                <img :src="slider.image"
-                     class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 -right-24 xl:right-0 h-full" alt="...">
+                <div class="absolute w-full min-h-screen slider-bg"></div>
                 <div class="relative max-w-7xl mx-auto">
                     <div class="slider-text-wrapper absolute grid grid-cols-1 gap-2 top-4 left-4 xl:top-10 xl:left-10">
                         <div class="slider-title uppercase">
@@ -41,14 +85,16 @@ onMounted(() => {
                             />
                         </div>
                     </div>
+                    <img :src="slider.image"
+                         class="absolute right-0" :alt="slider.title + ' image'">
                 </div>
             </div>
         </div>
         <!-- Slider controls -->
         <div class="absolute bottom-16 right-16 xl:right-32 flex">
             <button type="button"
-                    class="z-30 flex items-center justify-center px-4 cursor-pointer group focus:outline-none"
-                    data-carousel-prev>
+                    class="slider__btn--left z-30 flex items-center justify-center px-4 cursor-pointer group focus:outline-none"
+            >
                 <span
                     class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white group-hover:bg-white/50 group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
                     <svg class="w-4 h-4 text-red-500  rtl:rotate-180" aria-hidden="true"
@@ -59,8 +105,8 @@ onMounted(() => {
                 </span>
             </button>
             <button type="button"
-                    class="z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-                    data-carousel-next>
+                    class="slider__btn--right z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+            >
                 <span
                     class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white group-hover:bg-white/50  group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
                     <svg class="w-4 h-4 text-red-500  rtl:rotate-180" aria-hidden="true"
