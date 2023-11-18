@@ -80,6 +80,7 @@ function logout() {
 
                                 <template #content>
                                     <DropdownLink :href="route('profile.edit')">Особистий кабінет</DropdownLink>
+                                    <DropdownLink v-if="$page.props.auth.canAccessAdminPanel" :inertia="false" href="/admin">Адмінка</DropdownLink>
                                     <DropdownLink :href="route('logout')" method="post" as="button">
                                         Вийти
                                     </DropdownLink>

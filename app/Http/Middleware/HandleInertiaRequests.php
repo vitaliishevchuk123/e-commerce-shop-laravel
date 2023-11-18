@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'canAccessAdminPanel' => $request->user()?->canAccessAdminPanel(),
             ],
             'flash' => [
                 'message' => $request->session()->get('message'),

@@ -2,6 +2,12 @@
 import 'flowbite';
 import {ref, onMounted} from "vue";
 import DefaultButton from "@/Components/DefaultButton.vue";
+
+defineProps({
+        sliders: Array,
+    }
+)
+
 const mainCarousel = ref(null)
 onMounted(() => {
     // mainCarousel.focus()
@@ -9,43 +15,30 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="mainCarousel" class="relative w-full p-8" data-carousel="slide" data-carousel-interval="3000">
+    <div v-if="sliders.length" ref="mainCarousel" class="relative w-full p-8" data-carousel="slide" data-carousel-interval="3000">
         <!-- Carousel wrapper -->
         <div class="relative h-56 overflow-hidden rounded-lg md:h-72 xl:h-96">
             <!-- Item 1 -->
-            <div class="hidden duration-700 ease-in-out" data-carousel-item="active">
-                <div class="absolute inset-0 slider-bg"></div> <!-- Транспарентна заливка -->
-                <img src="/img/front/slider/girl-run.png"
+            <div v-for="(slider, index) in sliders"
+                class="hidden duration-700 ease-in-out"
+                data-carousel-item="active"
+            >
+                <!-- Транспарентна заливка -->
+                <div class="absolute inset-0 slider-bg"></div>
+                <img :src="slider.image"
                      class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 -right-24 xl:right-0 h-full" alt="...">
                 <div class="relative max-w-7xl mx-auto">
                     <div class="slider-text-wrapper absolute grid grid-cols-1 gap-2 top-4 left-4 xl:top-10 xl:left-10">
                         <div class="slider-title uppercase">
-                            Zero Runner
+                            {{ slider.title }}
                         </div>
                         <div class="slider-text uppercase">
-                            Біг з нульовим ударним навантаженням на суглоби
+                            {{ slider.text }}
                         </div>
                         <div class="slider-button-wrapper">
-                            <DefaultButton text="Дізнатись більше"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Item 2 -->
-            <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                <div class="absolute inset-0 slider-bg"></div> <!-- Транспарентна заливка -->
-                <img src="/img/front/slider/man-run.png"
-                     class="absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 -right-24 xl:right-0 h-full" alt="...">
-                <div class="relative max-w-7xl mx-auto">
-                    <div class="slider-text-wrapper absolute grid grid-cols-1 gap-2 top-4 left-4 xl:top-10 xl:left-10">
-                        <div class="slider-title uppercase">
-                            Бігова доріжка
-                        </div>
-                        <div class="slider-text uppercase">
-                            Для підготовки до марафону
-                        </div>
-                        <div class="slider-button-wrapper">
-                            <DefaultButton text="Дізнатись більше"/>
+                            <DefaultButton :text="slider.button"
+                                           :href="slider.url"
+                            />
                         </div>
                     </div>
                 </div>

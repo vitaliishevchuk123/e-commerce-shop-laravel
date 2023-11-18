@@ -39,7 +39,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole(['super admin', 'admin', 'writer', 'manager']);
+        return $this->canAccessAdminPanel();
     }
 
     public function scopeFilamentUsers(Builder $q): Builder
@@ -47,5 +47,10 @@ class User extends Authenticatable implements FilamentUser
         return $q->whereHas('roles', function (Builder $q) {
             $q->whereIn('name', ['super admin', 'admin', 'writer', 'manager']);
         });
+    }
+
+    public function canAccessAdminPanel(): bool
+    {
+        return $this->hasRole(['super admin', 'admin', 'writer', 'manager']);
     }
 }

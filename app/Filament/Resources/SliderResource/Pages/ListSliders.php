@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\AttributeResource\Pages;
+namespace App\Filament\Resources\SliderResource\Pages;
 
-use App\Filament\Resources\AttributeResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\SliderResource;
 use Filament\Resources\Concerns\Translatable;
+use Filament\Resources\Pages\ListRecords;
 
-class ListAttributes extends ListRecords
+class ListSliders extends ListRecords
 {
     use Translatable;
 
-    protected static string $resource = AttributeResource::class;
+    protected static string $resource = SliderResource::class;
 
     protected function getHeaderActions(): array
     {

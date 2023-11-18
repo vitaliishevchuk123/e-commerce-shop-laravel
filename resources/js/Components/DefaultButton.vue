@@ -1,13 +1,26 @@
 <script setup>
-defineProps({
-    'text': String,
+
+const props = defineProps({
+    text: {
+        type: String
+    },
+    href: {
+        type: String,
+        default: 'javascript:void(0);',
+    },
 })
+console.log(props.href)
 </script>
 
 <template>
-    <button class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
+    <button v-if="href == 'javascript:void(0);'" class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
         {{ text}}
     </button>
+    <a v-else
+       :href="href"
+       class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
+        {{ text}}
+    </a>
 </template>
 
 <style scoped lang="scss">

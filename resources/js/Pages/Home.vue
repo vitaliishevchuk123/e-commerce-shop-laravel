@@ -8,6 +8,7 @@ import FitnessClubGym from "@/Components/FitnessClubGym.vue";
 
 const props = defineProps({
         title: String,
+        sliders: Array,
         brands: Array,
         homeGymCats: Array,
         fitnessClubGymCats: Array,
@@ -19,7 +20,7 @@ const props = defineProps({
 <template>
     <Head :title="$page.props.title"/>
     <MainLayout>
-        <MainSlider/>
+        <MainSlider :sliders="sliders"/>
         <HomeGym :categories="homeGymCats"/>
         <FitnessClubGym :categories="fitnessClubGymCats"/>
         <PopularBrands :brands="brands"/>
