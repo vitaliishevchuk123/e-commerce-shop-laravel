@@ -1,4 +1,6 @@
 <script setup>
+import {Link} from '@inertiajs/vue3';
+import {onMounted} from "vue";
 
 const props = defineProps({
     text: {
@@ -9,18 +11,22 @@ const props = defineProps({
         default: 'javascript:void(0);',
     },
 })
-console.log(props.href)
+
+onMounted(() => {
+    document.body.classList.remove('overflow-hidden');
+})
 </script>
 
 <template>
     <button v-if="href == 'javascript:void(0);'" class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
-        {{ text}}
+        {{ text }}
     </button>
-    <a v-else
-       :href="href"
-       class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
-        {{ text}}
-    </a>
+    <Link v-else
+          :href="href">
+        <button class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
+            {{ text }}
+        </button>
+    </Link>
 </template>
 
 <style scoped lang="scss">

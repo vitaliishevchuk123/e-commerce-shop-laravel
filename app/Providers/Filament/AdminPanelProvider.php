@@ -64,6 +64,9 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->databaseNotifications()
-            ->viteTheme('resources/css/filament/admin/theme.css');
+            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->brandName('Well Fitness')
+            ->homeUrl('/')
+            ->brandLogo(asset('img/front/main-logo.svg'));
     }
 }

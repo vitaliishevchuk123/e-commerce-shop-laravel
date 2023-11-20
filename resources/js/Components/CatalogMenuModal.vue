@@ -11,10 +11,12 @@ const isShowModal = ref(false)
 
 function closeModal() {
     isShowModal.value = false
+    document.body.classList.remove('overflow-hidden');
 }
 
 function showModal() {
     isShowModal.value = true
+    document.body.classList.add('overflow-hidden');
 }
 
 function showChildrenOnHover(category) {

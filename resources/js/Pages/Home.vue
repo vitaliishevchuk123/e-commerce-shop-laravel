@@ -20,10 +20,10 @@ const props = defineProps({
 <template>
     <Head :title="$page.props.title"/>
     <MainLayout>
-        <MainSlider :sliders="sliders"/>
-        <HomeGym :categories="homeGymCats"/>
-        <FitnessClubGym :categories="fitnessClubGymCats"/>
-        <PopularBrands :brands="brands"/>
+        <MainSlider :sliders="sliders" v-motion-slide-bottom/>
+        <HomeGym :categories="homeGymCats" v-motion-slide-bottom/>
+        <FitnessClubGym :categories="fitnessClubGymCats" v-motion-slide-visible-once-bottom/>
+        <PopularBrands :brands="brands" v-motion-slide-visible-once-bottom/>
     </MainLayout>
 </template>
 

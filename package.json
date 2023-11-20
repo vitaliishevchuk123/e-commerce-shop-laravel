@@ -23,6 +23,8 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "@vueuse/core": "^10.6.1",
+        "@vueuse/motion": "^2.0.0",
         "flowbite-vue": "^0.1.0",
         "less": "^4.2.0",
         "swiper": "^11.0.4",
