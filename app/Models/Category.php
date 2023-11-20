@@ -30,6 +30,18 @@ class Category extends Model implements TreeConfigurable, Sortable
         return new Base(true);
     }
 
+    public static function findBySlug(string $slug, array $columns = ['*'])
+    {
+        $modelInstance = new static();
+        $field = $modelInstance->getSlugOptions()->slugField;
+
+        $field = in_array(HasTranslatableSlug::class, class_uses_recursive(static::class))
+            ? "{$field}->{$modelInstance->getLocale()}"
+            : $field;
+
+        return static::where($field, $slug)->first($columns);
+    }
+
     public function getCasts(): array
     {
         /**

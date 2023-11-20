@@ -3,6 +3,7 @@
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SwitchLocaleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,10 +18,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/language/{locale}', function ($language) {
-    session()->put('locale', $language);
-    return redirect()->back();
-})->name('language');
+Route::get('/language/{locale}', SwitchLocaleController::class)->name('language');
 
 Route::controller(IndexController::class)->group(function () {
     Route::get('/', 'index')->name('home');

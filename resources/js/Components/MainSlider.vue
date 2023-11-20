@@ -72,7 +72,7 @@ function prevSlide() {
                 <!-- Транспарентна заливка -->
                 <div class="absolute w-full min-h-screen slider-bg"></div>
                 <div class="relative max-w-7xl mx-auto">
-                    <div class="slider-text-wrapper absolute grid grid-cols-1 gap-2 top-4 left-4 xl:top-10 xl:left-10">
+                    <div class="slider-text-wrapper z-[10] absolute grid grid-cols-1 gap-2 top-4 left-4 xl:top-10 xl:left-10">
                         <div class="slider-title uppercase">
                             {{ slider.title }}
                         </div>

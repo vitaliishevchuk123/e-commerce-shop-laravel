@@ -20,10 +20,18 @@ const props = defineProps({
 <template>
     <Head :title="$page.props.title"/>
     <MainLayout>
-        <MainSlider :sliders="sliders" v-motion-slide-bottom/>
-        <HomeGym :categories="homeGymCats" v-motion-slide-bottom/>
-        <FitnessClubGym :categories="fitnessClubGymCats" v-motion-slide-visible-once-bottom/>
-        <PopularBrands :brands="brands" v-motion-slide-visible-once-bottom/>
+        <MainSlider :sliders="sliders"
+                    style="transition: 0.25s ease-out"
+                    v-motion-slide-bottom/>
+        <HomeGym :categories="homeGymCats"
+                 style="transition: 0.25s ease-out"
+                 v-motion-slide-bottom/>
+        <FitnessClubGym :categories="fitnessClubGymCats"
+                        style="transition: 0.25s ease-out"
+                        v-motion-slide-visible-once-bottom/>
+        <PopularBrands :brands="brands"
+                       style="transition: 0.25s ease-out"
+                       v-motion-slide-visible-once-bottom/>
     </MainLayout>
 </template>
 

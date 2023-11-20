@@ -10,7 +10,7 @@ defineProps({
 
 <template>
     <div class="max-w-7xl mx-auto p-4 mb-6">
-        <BlockTitle title="Популярні бренди"/>
+        <BlockTitle :title="__('Popular brands')"/>
         <div class="grid grid-cols-3 grid-rows-3 lg:grid-cols-4 xl:grid-cols-5">
                 <BrandItem v-for="(brand, index) in brands"
                            :key="index + '-brand-item'"

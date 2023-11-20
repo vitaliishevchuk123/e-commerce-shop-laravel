@@ -86,7 +86,7 @@ onMounted(() => {
                 </clipPath>
             </defs>
         </svg>
-        <button class="font-semibold text-xl text-white leading-tight">Каталог</button>
+        <button class="font-semibold text-xl text-white leading-tight">{{ __('Catalogue') }}</button>
     </div>
     <div @click.self="closeModal"
          :class="{

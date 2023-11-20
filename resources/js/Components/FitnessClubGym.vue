@@ -11,7 +11,7 @@ defineProps({
 
 <template>
     <div v-if="categories.length" class="max-w-7xl mx-auto p-4 mb-6">
-        <BlockTitle title="Для фітнес клубів"/>
+        <BlockTitle :title="__('For fitness clubs')"/>
         <div class="grid grid-rows-4 grid-cols-2 gap-4 lg:grid-rows-2 lg:grid-cols-4 lg:gap-8 mb-6">
             <ImageCard
                 v-for="(category, index) in categories"
@@ -27,7 +27,7 @@ defineProps({
                 }"
             />
         </div>
-        <DefaultButton text="Всі категорії" :href="route('catalog', 'dlia-fitnes-klubiv')"/>
+        <DefaultButton :text="__('All categories')" :href="route('catalog', 'dlia-fitnes-klubiv')"/>
     </div>
 </template>
 
