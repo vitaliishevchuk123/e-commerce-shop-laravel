@@ -11,15 +11,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
+use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\HasTranslatableSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 
 class Category extends Model implements TreeConfigurable, Sortable
 {
-    use HasFactory, NestedSetTrait, SoftDeletes, HasTranslations, HasTranslatableSlug, SortableTrait;
+    use HasFactory, NestedSetTrait, SoftDeletes, HasTranslations, HasSlug, SortableTrait;
 
-    public array $translatable = ['name', 'slug'];
+    public array $translatable = ['name'];
 
     protected static $unguarded = false;
 
@@ -28,18 +29,6 @@ class Category extends Model implements TreeConfigurable, Sortable
     protected static function buildTreeConfig(): Base
     {
         return new Base(true);
-    }
-
-    public static function findBySlug(string $slug, array $columns = ['*'])
-    {
-        $modelInstance = new static();
-        $field = $modelInstance->getSlugOptions()->slugField;
-
-        $field = in_array(HasTranslatableSlug::class, class_uses_recursive(static::class))
-            ? "{$field}->{$modelInstance->getLocale()}"
-            : $field;
-
-        return static::where($field, $slug)->first($columns);
     }
 
     public function getCasts(): array

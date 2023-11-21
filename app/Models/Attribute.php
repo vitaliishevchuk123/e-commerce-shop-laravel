@@ -12,7 +12,7 @@ use Spatie\Translatable\HasTranslations;
 
 class Attribute extends Model
 {
-    use HasFactory, SoftDeletes, HasTranslations, HasSlug;
+    use HasFactory, SoftDeletes, HasSlug, HasTranslations;
 
     public array $translatable = ['name'];
 
