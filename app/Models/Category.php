@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Spatie\Sluggable\HasSlug;
-use Spatie\Sluggable\HasTranslatableSlug;
 use Spatie\Sluggable\SlugOptions;
 use Spatie\Translatable\HasTranslations;
 
@@ -70,5 +69,12 @@ class Category extends Model implements TreeConfigurable, Sortable
             return url('storage/' . $this->image);
         }
         return url('img/no-img-available.png');
+    }
+
+    public function getCatalogUrl(): string
+    {
+        return route('catalog', [
+            'slug' => $this->slug,
+        ]);
     }
 }

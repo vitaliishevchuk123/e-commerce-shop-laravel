@@ -102,7 +102,7 @@ console.log(route('home', null, false, ), 2)
                                      class="nav-link nav-link--white">
                                 <span
                                     class="mr-1"
-                                >Увійти
+                                >{{ __('Sign in') }}
                                     </span>
                                 <i class="fa-solid fa-user"></i>
                             </NavLink>
@@ -161,7 +161,7 @@ console.log(route('home', null, false, ), 2)
                                        :href="route('login')">
                                 <span
                                     class="mr-1"
-                                >Увійти
+                                >{{ __('Sign in') }}
                                     </span>
                         <i class="fa-solid fa-user"></i>
                     </ResponsiveNavLink>
