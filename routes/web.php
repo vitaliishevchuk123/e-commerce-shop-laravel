@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SwitchLocaleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,15 +18,21 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::pattern('locale', implode('|', config('app.available_locales')));
 
 Route::get('/language/{locale}', SwitchLocaleController::class)->name('language');
 
-Route::controller(IndexController::class)->group(function () {
-    Route::get('/', 'index')->name('home');
-});
+Route::group([
+    'prefix' => LaravelLocalization::setLocale(),
+    'middleware' => ['localizationRedirect']
+], function () {
+    Route::controller(IndexController::class)->group(function () {
+        Route::get('/', 'index')->name('home');
+    });
 
-Route::controller(CatalogController::class)->group(function () {
-    Route::get('/catalog/{slug}', 'index')->name('catalog');
+    Route::controller(CatalogController::class)->group(function () {
+        Route::get('catalog/{slug}', 'index')->name('catalog');
+    });
 });
 
 Route::get('/dashboard', function () {
@@ -38,4 +45,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

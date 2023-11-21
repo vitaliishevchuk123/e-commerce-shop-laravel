@@ -22,6 +22,8 @@ function logout() {
     this.$inertia.delete(route('logout'))
 }
 
+console.log(route('home', null, false, ), 2)
+
 </script>
 
 <template>

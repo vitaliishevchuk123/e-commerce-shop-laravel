@@ -1,6 +1,5 @@
 <script setup>
-import {Link, usePage} from '@inertiajs/vue3'
-import {ref} from 'vue'
+import {usePage} from '@inertiajs/vue3'
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
 
@@ -17,7 +16,8 @@ const page = usePage()
                     class="inline-flex items-center border border-transparent text-sm leading-4 font-medium rounded-md text-white hover:text-gray focus:outline-none transition ease-in-out duration-150"
                 >
                     <div class="flex items-center gap-1">
-                        <img class="h-4" :src="'/img/front/' + $page.props.locale + '-flag-icon.svg'" alt="ukraine-flag-icon">
+                        <img class="h-4" :src="'/img/front/' + $page.props.locale + '-flag-icon.svg'"
+                             alt="ukraine-flag-icon">
                         <span>{{ $page.props.locale.toUpperCase() }}</span>
                     </div>
 
@@ -37,22 +37,15 @@ const page = usePage()
             </span>
         </template>
         <template #content>
-            <DropdownLink :href="route('language', 'uk')">
+            <DropdownLink v-for="(langLink, index) in $page.props.languageSelector"
+                          rel="alternate"
+                          :inertia="false"
+                          :hreflang="langLink.hreflang"
+                          :href="langLink.href">
                 <div class="flex items-center gap-1">
-                    <img class="h-4" src="/img/front/uk-flag-icon.svg" alt="ukraine-flag-icon">
-                    <span>UK</span>
-                </div>
-            </DropdownLink>
-            <DropdownLink :href="route('language', 'en')">
-                <div class="flex items-center gap-1">
-                    <img class="h-4" src="/img/front/en-flag-icon.svg" alt="united-kingdom-flag-icon">
-                    <span>EN</span>
-                </div>
-            </DropdownLink>
-            <DropdownLink :href="route('language', 'ru')">
-                <div class="flex items-center gap-1">
-                    <img class="h-4" src="/img/front/ru-flag-icon.svg" alt="russia-flag-icon">
-                    <span>RU</span>
+                    <img class="h-4" :src="'/img/front/' + langLink.hreflang + '-flag-icon.svg'"
+                         :alt="langLink.title">
+                    <span>{{ langLink.title }}</span>
                 </div>
             </DropdownLink>
         </template>
