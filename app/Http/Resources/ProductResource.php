@@ -24,6 +24,7 @@ class ProductResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'categories_count' => $this->categories_count,
+            'image' => $this->getFirstImgUrl(),
 
             'brand_id' => $this->brand_id,
 

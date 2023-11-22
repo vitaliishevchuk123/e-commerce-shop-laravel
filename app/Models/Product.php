@@ -49,4 +49,9 @@ class Product extends Model implements HasMedia
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
+
+    public function getFirstImgUrl(): string
+    {
+        return $this->getFirstMedia()?->getUrl() ?? url('img/no-img-available.png');
+    }
 }

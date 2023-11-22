@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Helpers\Breadcrumbs;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\ProductResource;
@@ -29,7 +30,11 @@ class CatalogController extends Controller
             'title' => 'Catalog' . $category->name,
             'breadcrumbs' => $breadcrumbs->crumbs(),
             'category' => CategoryResource::make($category),
-            'products' => ProductResource::collection($category->products),
+            'products' => ProductResource::collection(
+                $category->products()
+                    ->with(['media'])
+                    ->get()
+            ),
             'categorySiblings' => CategoryResource::collection($categorySiblings),
         ]);
     }
