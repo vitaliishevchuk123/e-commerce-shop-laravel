@@ -102,7 +102,7 @@ function logout() {
                                     class="mr-1"
                                 >{{ __('Sign in') }}
                                     </span>
-                                <i class="fa-solid fa-user"></i>
+                                <i class="fa-solid fa-user pt-[0.15em]"></i>
                             </NavLink>
                         </template>
                     </div>
@@ -161,7 +161,7 @@ function logout() {
                                     class="mr-1"
                                 >{{ __('Sign in') }}
                                     </span>
-                        <i class="fa-solid fa-user"></i>
+                        <i class="fa-solid fa-user pt-[0.15em]"></i>
                     </ResponsiveNavLink>
                 </div>
 

@@ -6,13 +6,21 @@ defineProps({
 </script>
 
 <template>
-    <div class="product-card flex flex-col bg-white rounded-md">
+    <div class="relative product-card flex flex-col bg-white rounded-md transition duration-300 ease-in-out hover:scale-105 p-4">
         <div class="product-image">
+            <div class="hurt absolute right-4 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 20" fill="none">
+                    <path d="M22.0718 1.95979C19.4616 -0.652909 15.2154 -0.652909 12.6059 1.95979L11.9998 2.56628L11.394 1.95979C8.78455 -0.653262 4.53795 -0.653262 1.92847 1.95979C-0.628032 4.51944 -0.644633 8.57675 1.88997 11.3977C4.2017 13.9698 11.0196 19.5265 11.3089 19.7617C11.5053 19.9215 11.7416 19.9993 11.9765 19.9993C11.9842 19.9993 11.992 19.9993 11.9994 19.999C12.2424 20.0103 12.4872 19.9268 12.6899 19.7617C12.9792 19.5265 19.7979 13.9698 22.1103 11.3974C24.6445 8.57675 24.6279 4.51944 22.0718 1.95979ZM20.535 9.97823C18.7326 11.983 13.7782 16.1178 11.9994 17.585C10.2207 16.1181 5.26732 11.9837 3.46527 9.97858C1.69712 8.01093 1.68052 5.20868 3.42677 3.46028C4.31861 2.56769 5.48984 2.12105 6.66107 2.12105C7.8323 2.12105 9.00354 2.56734 9.89538 3.46028L11.2277 4.79421C11.3863 4.953 11.5862 5.04777 11.796 5.08102C12.1365 5.15422 12.5059 5.05909 12.7708 4.79457L14.1038 3.46028C15.8879 1.67475 18.7898 1.67511 20.5728 3.46028C22.319 5.20868 22.3024 8.01093 20.535 9.97823Z" fill="#858FA4"/>
+                </svg>
+                <svg v-if="false" xmlns="http://www.w3.org/2000/svg" width="24" height="20" viewBox="0 0 24 20" fill="none">
+                    <path d="M22.0718 1.95979C19.4616 -0.652909 15.2154 -0.652909 12.6059 1.95979L11.9998 2.56628L11.394 1.95979C8.78455 -0.653262 4.53795 -0.653262 1.92847 1.95979C-0.628032 4.51944 -0.644633 8.57675 1.88997 11.3977C4.2017 13.9698 11.0196 19.5265 11.3089 19.7617C11.5053 19.9215 11.7416 19.9993 11.9765 19.9993C11.9842 19.9993 11.992 19.9993 11.9994 19.999C12.2424 20.0103 12.4872 19.9268 12.6899 19.7617C12.9792 19.5265 19.7979 13.9698 22.1103 11.3974C24.6445 8.57675 24.6279 4.51944 22.0718 1.95979Z" fill="#F53B49"/>
+                </svg>
+            </div>
             <img src="/img/products/product.png" alt="Зображення продукту">
         </div>
-        <div class="product-details p-4 flex flex-col h-full justify-between">
-            <div class="flex items-center gap-2 text-sm mb-2">
-                <div class="flex items-center gap-2 color-green">
+        <div class="product-details flex flex-col h-full justify-between text-sm">
+            <div class="flex items-center gap-2 text-xs mb-2">
+                <div class="flex items-center gap-1 color-green">
                     <span>В наличии</span>
                     <div class="flex gap-1">
                         <div class="green-dot"></div>

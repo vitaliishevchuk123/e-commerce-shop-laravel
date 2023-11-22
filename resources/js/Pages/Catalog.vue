@@ -8,6 +8,7 @@ import ContentWrapper from "@/Components/ContentWrapper.vue";
 import SortingFields from "@/Components/SortingFields.vue";
 import CategorySiblings from "@/Components/CategorySiblings.vue";
 import CatalogProducts from "@/Components/CatalogProducts.vue";
+import CatalogFilters from "@/Components/CatalogFilters.vue";
 
 defineProps({
         title: String,
@@ -30,7 +31,10 @@ defineProps({
                 <CategorySiblings :categorySiblings="categorySiblings"/>
                 <SortingFields/>
             </div>
-            <CatalogProducts :products="products"/>
+            <div class="grid grid-cols-[6fr,1fr] mb-6">
+                <CatalogProducts :products="products"/>
+                <CatalogFilters/>
+            </div>
         </ContentWrapper>
     </MainLayout>
 </template>

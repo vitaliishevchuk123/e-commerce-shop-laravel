@@ -23,6 +23,7 @@
         "vue": "^3.2.41"
     },
     "dependencies": {
+        "@vueform/slider": "^2.1.9",
         "@vueuse/core": "^10.6.1",
         "@vueuse/motion": "^2.0.0",
         "flowbite-vue": "^0.1.0",

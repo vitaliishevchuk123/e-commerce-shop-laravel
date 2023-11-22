@@ -6,6 +6,10 @@ const props = defineProps({
     text: {
         type: String
     },
+    textXS: {
+        type: Boolean,
+        default: false,
+    },
     href: {
         type: String,
         default: 'javascript:void(0);',
@@ -18,12 +22,24 @@ onMounted(() => {
 </script>
 
 <template>
-    <button v-if="href == 'javascript:void(0);'" class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
+    <button v-if="href == 'javascript:void(0);'"
+            class="slider-button"
+            :class="{
+                    'text-sm md:text-base lg:text-lg xl:text-xl': !textXS,
+                    'text-xs lg:text-sm': textXS
+
+                }"
+    >
         {{ text }}
     </button>
     <Link v-else
           :href="href">
-        <button class="slider-button text-sm md:text-base lg:text-lg xl:text-xl">
+        <button class="slider-button"
+                :class="{
+                    'text-sm md:text-base lg:text-lg xl:text-xl': !textXS,
+                    'text-xs lg:text-sm': textXS
+                }"
+        >
             {{ text }}
         </button>
     </Link>
