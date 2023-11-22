@@ -13,6 +13,7 @@
         "efureev/laravel-trees": "^3.8",
         "filament/filament": "^3.0",
         "filament/notifications": "^3.0-stable",
+        "filament/spatie-laravel-media-library-plugin": "^3.0-stable",
         "filament/spatie-laravel-translatable-plugin": "^3.0-stable",
         "guzzlehttp/guzzle": "^7.2",
         "inertiajs/inertia-laravel": "^0.6.11",

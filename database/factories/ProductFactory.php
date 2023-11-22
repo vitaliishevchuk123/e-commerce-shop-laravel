@@ -14,7 +14,7 @@ class ProductFactory extends Factory
 
         return [
             'brand_id' => Brand::factory(),
-            'sku' => $this->faker->shuffleString('1q2w3e4r5t6y7u8i9o0p1a2s3d4f5g6h7j8k9l'),
+            'sku' => $this->faker->unique()->regexify('[A-Z]{3}_\d{3}'),
             'name' => $name,
             'slug' => (string) Str::of($name)->slug(),
             'description' => $this->faker->text(),
