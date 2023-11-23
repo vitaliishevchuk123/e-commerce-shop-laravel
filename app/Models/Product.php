@@ -69,4 +69,9 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsToMany(AttributeValue::class);
     }
+
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(Label::class);
+    }
 }

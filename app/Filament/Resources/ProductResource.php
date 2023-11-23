@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers\CategoriesRelationManager;
 use App\Models\AttributeValue;
+use App\Models\Label;
 use App\Models\Product;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\Checkbox;
@@ -70,6 +71,32 @@ class ProductResource extends Resource
 
             Checkbox::make('featured'),
 
+            Select::make('attributeValues')
+                ->label('Attributes')
+                ->multiple()
+                ->relationship(
+                    name: 'attributeValues',
+                    titleAttribute: 'value',
+                    modifyQueryUsing: fn(Builder $query) => $query->withAttributeName(),
+                )
+                ->getOptionLabelFromRecordUsing(fn(AttributeValue $record) => "{$record->attribute->name} -> {$record->value}")
+                ->searchable([
+                    'value',
+                    'attributes.name'
+                ]),
+
+            Select::make('labels')
+                ->label('Labels')
+                ->multiple()
+                ->relationship(
+                    name: 'labels',
+                    titleAttribute: 'name',
+                )
+                ->getOptionLabelFromRecordUsing(fn(Label $record) => $record->name)
+                ->searchable([
+                    'name',
+                ]),
+
             Placeholder::make('created_at')
                 ->label('Created Date')
                 ->content(fn(?Product $record): string => $record?->created_at?->diffForHumans() ?? '-'),
@@ -81,20 +108,6 @@ class ProductResource extends Resource
             SpatieMediaLibraryFileUpload::make('media')
                 ->multiple()
                 ->enableReordering(),
-
-            Select::make('attributeValues')
-                ->label('Attributes')
-                ->multiple()
-                ->relationship(
-                    name: 'attributeValues',
-                    titleAttribute: 'value',
-                    modifyQueryUsing: fn (Builder $query) => $query->withAttributeName(),
-                )
-                ->getOptionLabelFromRecordUsing(fn (AttributeValue $record) => "{$record->attribute->name} -> {$record->value}")
-            ->searchable([
-                'value',
-                'attributes.name'
-            ])
         ]);
     }
 

@@ -11,6 +11,7 @@
         "php": "^8.1",
         "codewithdennis/filament-select-tree": "^3.1",
         "efureev/laravel-trees": "^3.8",
+        "elasticsearch/elasticsearch": "^8.11",
         "filament/filament": "^3.0",
         "filament/notifications": "^3.0-stable",
         "filament/spatie-laravel-media-library-plugin": "^3.0-stable",

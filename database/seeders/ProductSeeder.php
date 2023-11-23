@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Helpers\DirManager;
+use App\Models\AttributeValue;
 use App\Models\Category;
+use App\Models\Label;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 
@@ -256,10 +258,14 @@ class ProductSeeder extends Seeder
         ];
 
         $cat = Category::findBySlug('bigovi-dorizki');
+        $attributeValues = AttributeValue::get();
+        $labels = Label::query()->get();
 
         foreach ($treadmills as $treadmill) {
             $product = Product::create($treadmill);
             $product->categories()->attach($cat);
+            $product->labels()->attach($labels->random()->first());
+            $product->attributeValues()->attach($attributeValues->random(5));
         }
 
 
