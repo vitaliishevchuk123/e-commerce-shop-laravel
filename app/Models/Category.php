@@ -60,6 +60,7 @@ class Category extends Model implements TreeConfigurable, Sortable
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
+            ->doNotGenerateSlugsOnUpdate()
             ->saveSlugsTo('slug');
     }
 

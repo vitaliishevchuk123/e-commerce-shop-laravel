@@ -87,39 +87,6 @@ class AttributeSeeder extends Seeder
                 ],
             ],
             [
-                'code' => 'brand',
-                'name' => [
-                    'en' => 'Brand',
-                    'uk' => 'Бренд',
-                    'ru' => 'Бренд',
-                ],
-                'frontend_type' => 'text',
-                'is_required' => false,
-                'is_filterable' => true,
-                'values' => [
-                    [
-                        'en' => 'Nike',
-                        'uk' => 'Найк',
-                        'ru' => 'Nike',
-                    ],
-                    [
-                        'en' => 'Adidas',
-                        'uk' => 'Адідас',
-                        'ru' => 'Adidas',
-                    ],
-                    [
-                        'en' => 'Puma',
-                        'uk' => 'Пума',
-                        'ru' => 'Puma',
-                    ],
-                    [
-                        'en' => 'Under Armour',
-                        'uk' => 'Андер Армур',
-                        'ru' => 'Under Armour',
-                    ],
-                ],
-            ],
-            [
                 'code' => 'material',
                 'name' => [
                     'en' => 'Material',

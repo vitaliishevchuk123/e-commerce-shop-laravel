@@ -10,7 +10,8 @@ return new class extends Migration {
 		Schema::create('products', function (Blueprint $table) {
 			$table->id();
 
-            $table->foreignIdFor(\App\Models\Brand::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Brand::class)
+                ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('sku', 100)->unique();
             $table->jsonb('name');
             $table->string('slug', 100)->unique()->nullable();

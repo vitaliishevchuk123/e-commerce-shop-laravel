@@ -2,7 +2,6 @@
 import {Head} from '@inertiajs/vue3'
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Breadcrumbs from "@/Components/Breadcrumbs.vue";
-import {defineProps} from 'vue';
 import MainTitle from "@/Components/MainTitle.vue";
 import ContentWrapper from "@/Components/ContentWrapper.vue";
 import SortingFields from "@/Components/SortingFields.vue";

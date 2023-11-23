@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers\CategoriesRelationManager;
+use App\Models\AttributeValue;
 use App\Models\Product;
 use CodeWithDennis\FilamentSelectTree\SelectTree;
 use Filament\Forms\Components\Checkbox;
@@ -12,6 +13,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Resources\Concerns\Translatable;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\CheckboxColumn;
@@ -22,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProductResource extends Resource
 {
+    use Translatable;
+
     protected static ?string $model = Product::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -76,9 +80,21 @@ class ProductResource extends Resource
 
             SpatieMediaLibraryFileUpload::make('media')
                 ->multiple()
-                ->enableReordering()
-                ->customProperties(['zip_filename_prefix' => 'products/'])
-            ->statePath('products')
+                ->enableReordering(),
+
+            Select::make('attributeValues')
+                ->label('Attributes')
+                ->multiple()
+                ->relationship(
+                    name: 'attributeValues',
+                    titleAttribute: 'value',
+                    modifyQueryUsing: fn (Builder $query) => $query->withAttributeName(),
+                )
+                ->getOptionLabelFromRecordUsing(fn (AttributeValue $record) => "{$record->attribute->name} -> {$record->value}")
+            ->searchable([
+                'value',
+                'attributes.name'
+            ])
         ]);
     }
 

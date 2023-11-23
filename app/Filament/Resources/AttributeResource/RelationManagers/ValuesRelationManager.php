@@ -13,6 +13,9 @@ class ValuesRelationManager extends RelationManager
 {
     use Translatable;
 
+    #[Reactive]
+    public ?string $activeLocale = null;
+
     protected static string $relationship = 'values';
 
     public function form(Form $form): Form
@@ -31,6 +34,7 @@ class ValuesRelationManager extends RelationManager
             ->recordTitleAttribute('value')
             ->columns([
                 Tables\Columns\TextColumn::make('value'),
+                Tables\Columns\TextColumn::make('code'),
             ])
             ->filters([
                 //

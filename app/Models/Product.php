@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,11 +48,25 @@ class Product extends Model implements HasMedia
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
+            ->doNotGenerateSlugsOnUpdate()
             ->saveSlugsTo('slug');
     }
 
     public function getFirstImgUrl(): string
     {
         return $this->getFirstMedia()?->getUrl() ?? url('img/no-img-available.png');
+    }
+
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            get: static fn($value) => $value / 100,
+            set: static fn($value) => $value * 100,
+        );
+    }
+
+    public function attributeValues(): BelongsToMany
+    {
+        return $this->belongsToMany(AttributeValue::class);
     }
 }
