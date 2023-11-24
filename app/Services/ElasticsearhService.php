@@ -4,81 +4,102 @@ namespace App\Services;
 
 use App\Models\Attribute;
 use App\Models\AttributeValue;
-use App\Models\Category;
-use App\Models\Label;
 use App\Models\Product;
 use Elastic\Elasticsearch\Client;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 
 class ElasticsearhService
 {
-    const INDEX = 'ecom';
+    const INDEX = 'products';
 
     public function __construct(private Client $elasticsearch)
     {
     }
 
+    public function deleteIndex()
+    {
+        $params = [
+            'index' => self::INDEX,
+        ];
+
+        $this->elasticsearch->indices()->delete($params);
+    }
+
+    public function putAttributeMapping(): void
+    {
+        $properties = Attribute::get()->mapWithKeys(function (Attribute $attribute) {
+            return [
+                $attribute->code => [
+                    'type' => 'keyword'
+                ]
+            ];
+        })->toArray();
+
+        $mappingParams = [
+            'index' => 'products',
+            'body' => [
+                'properties' => $properties,
+            ],
+        ];
+
+        $this->elasticsearch->indices()->putMapping($mappingParams);
+
+        $params = ['index' => 'products'];
+
+        $this->elasticsearch->indices()->refresh($params);
+
+    }
+
+    public function createIndexWithMapping(): void
+    {
+        $params = [
+            'index' => self::INDEX,
+            'body' => [
+                'mappings' => [
+                    'properties' => [
+                        'category' => [
+                            'type' => 'keyword',
+                        ],
+                        'label' => [
+                            'type' => 'keyword',
+                        ],
+                    ]
+                ]
+            ]
+        ];
+
+        $this->elasticsearch->indices()->create($params);
+    }
+
     public function indexProduct(Product $product): string
     {
-        $product->load('attributeValues', 'attributeValues.attribute', 'labels');
-        $labels = $product->labels->map(function (Label $label) {
-            return [
-                'label' => $label->code,
-                'color' => $label->color,
-            ];
-        })->toArray();
+        $product->load('attributeValues', 'attributeValues.attribute', 'labels', 'categories', 'brand');
 
-        $filters = $product->attributeValues->map(function (AttributeValue $value) {
-            return [
-                'name' => $value->attribute->code,
-                'pretty_name' => $value->attribute->name,
-                'value' => $value->code,
-                'label' => $value->value,
-            ];
-        })->toArray();
+        $attributeValues = $product->attributeValues
+            ->mapWithKeys(function (AttributeValue $value) {
+                return [
+                    $value->attribute->code => $value->code
+                ];
+            })
+            ->toArray();
 
-        $filters[] = [
-            'name' => 'type',
-            'pretty_name' => 'Type',
-            'value' => 'product',
-            'label' => 'product',
+        $body = [
+            'name' => array_values($product->getTranslations('name')),
+            'description' => array_values($product->getTranslations('description')),
+            'brand' => $product->brand->slug,
+            'label' => $product->labels->pluck('code')->toArray(),
+            'category' => $product->categories->pluck('slug')->toArray(),
         ];
 
-        $filters[] = [
-            'name' => 'Brand',
-            'pretty_name' => 'Brand',
-            'value' => $product->brand->name,
-            'label' => $product->brand->name,
-        ];
-
-        $product->categories->map(function (Category $category) use (&$filters) {
-            $filters[] = [
-                'name' => 'category',
-                'pretty_name' => 'Category',
-                'value' => $category->slug,
-                'label' => $category->name,
-            ];
-        })->toArray();
+        $body = array_merge($body, $attributeValues);
 
         $document = [
             'index' => self::INDEX,
             'id' => $product->id,
-            'body' => [
-                'title' => $product->name,
-                'description' => $product->description,
-                'price' => $product->sale_price,
-                'filters' => $filters,
-                'labels' => $labels,
-            ],
+            'body' => $body,
         ];
-
-        if (count($filters) === 0) {
-            unset($document['body']['filters']);
-        }
-
-        if (count($labels) === 0) {
-            unset($document['body']['labels']);
-        }
 
         try {
             $result = $this->elasticsearch->index($document);
@@ -88,259 +109,139 @@ class ElasticsearhService
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request): LengthAwarePaginator
     {
-        $requestFilterValues = Attribute::pluck('code')->toArray();
-
-        array_push($requestFilterValues, 'category', 'brand');
-
-        $requestFilters = $request->only($requestFilterValues);
-
-//        $requestFilters[] = 'type';
+        $perPage = 10;
+        $currentPage = $request->input('page', 1);
+        $search = $request->input('search');
 
         $params = [
             'index' => self::INDEX,
-            'size' => 25, //Paginate items on Page
             'body' => [
-                'aggs' => [
-                    'aggs_all_filters' => [
-                        'filter' => [
-                            'bool' => [
-                                'filter' => [
-                                    [
-                                        'multi_match' => [
-                                            'query' => $request->get('search', ''),
-                                            'fields' => ['tittle', 'description', 'all_filters'],
-                                            'operator' => 'and',
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                        'aggs' => [
-                            'facets' => [
-                                'nested' => [
-                                    'path' => 'filters'
-                                ],
-                                'aggs' => [
-                                    'names' => [
-                                        'terms' => [
-                                            'field' => 'filters.name'
-                                        ],
-                                        'aggs' => [
-                                            'values' => [
-                                                'terms' => [
-                                                    'field' => 'filters.value',
-                                                    'order' => [
-                                                        '_key' => 'asc',
-                                                    ],
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                'query' => [
+                    'bool' => [
+                        'must' => [],
                     ],
                 ],
-                'post_filter' => [],
+                'size' => $perPage,
+                'from' => ($currentPage - 1) * $perPage,
+
             ],
         ];
 
-        if ($request->missing('search')) {
-            unset($params['body']['aggs']['aggs_all_filters']['filter']['bool']['filter'][0]);
-        }
-
-        if ($request->has('search') && !empty($request->get('search'))) {
-            $params['body']['query'] = [
-                'bool' => [
-                    'must' => [
-                        [
-                            'multi_match' => [
-                                'query' => $request->get('search'),
-                                'fields' => ['tittle', 'description', 'all_filters'],
-                                'operator' => 'and',
-                            ],
-                        ],
-                    ],
+        if ($search) {
+            $params['body']['query']['bool']['must'][] = [
+                'multi_match' => [
+                    'query' => $search,
+                    'fields' => ['name', 'description'],
+                    'type' => 'most_fields', // Ви можете вибрати інший тип пошуку
                 ],
             ];
         }
 
-        if (count($requestFilters)) {
-            $requestFilters = array_filter($requestFilters, function ($value) {
-                return !empty($value);
-            });
-
-            if (count($requestFilters)) {
-                $aggsFilters = [];
-                foreach ($requestFilters as $key => $values) {
-                    if (count($requestFilters) > 1) {
-                        $diff = array_values(array_diff(array_keys($requestFilters), [$key]));
-                        $aggsFilters[$key] = $diff;
-                    }
-
-                    if (count($requestFilters) === 1) {
-                        $aggsFilters[$key][] = $key;
-                    }
-                }
-
-                foreach ($aggsFilters as $key => $innerFacets) {
-                    foreach ($innerFacets as $innerKey => $filterKey) {
-                        $aggsFilters[$key][$filterKey] = explode(',', $requestFilters[$filterKey]);
-                        unset($aggsFilters[$key][$innerKey]);
-                    }
-                }
-
-                if (count($aggsFilters)) {
-                    foreach ($aggsFilters as $outerAggKey => $innerAggs) {
-                        foreach ($innerAggs as $key => $values) {
-
-                            $addFilterNameAndValues = [
-                                [
-                                    'term' => [
-                                        'filters.name' => $key,
-                                    ]
-                                ],
-                            ];
-
-                            foreach ($values as $value) {
-                                $addFilterNameAndValues[1] = [
-                                    'bool' => [
-                                        'must' => [
-                                            [
-                                                'term' => [
-                                                    'filters.value' => $value,
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ];
-
-                            }
-
-                            $params['body']['aggs']['aggs_' . $outerAggKey] = [
-                                'filter' => [
-                                    'bool' => [
-                                        'filter' => [
-                                            [
-                                                'nested' => [
-                                                    'path' => 'filters',
-                                                    'query' => [
-                                                        'bool' => [
-                                                            'filter' => $addFilterNameAndValues,
-                                                        ],
-                                                    ],
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                                'aggs' => [
-                                    'facets' => [
-                                        'nested' => [
-                                            'path' => 'filters',
-                                        ],
-                                        'aggs' => [
-                                            'aggs_special' => [
-                                                'filter' => [
-                                                    'match' => [
-                                                        'filters.name' => $outerAggKey,
-                                                    ]
-                                                ],
-                                                'aggs' => [
-                                                    'names' => [
-                                                        'terms' => [
-                                                            'field' => 'filters.name'
-                                                        ],
-                                                        'aggs' => [
-                                                            'values' => [
-                                                                'terms' => [
-                                                                    'field' => 'filters.value',
-                                                                    'order' => [
-                                                                        '_key' => 'asc',
-                                                                    ],
-                                                                ],
-                                                            ],
-                                                        ],
-                                                    ],
-                                                ],
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ];
-                        }
-                    }
-                }
-
-                $i = 0;
-
-                foreach ($requestFilters as $filter => $values) {
-
-                    $params['body']['aggs']['aggs_all_filters']['filter']['bool']['filter'][$i] = [
-                        'nested' => [
-                            'path' => 'filters',
-                            'query' => [
-                                'bool' => [
-                                    'must' => [
-                                        [
-                                            'term' => [
-                                                'filters.name' => $filter,
-                                            ],
-                                        ],
-                                    ],
-                                    'should' => [],
-                                    'minimum_should_match' => 1,
-                                ]
-                            ]
-                        ]
-                    ];
-
-                    $values = explode(',', $values);
-                    foreach ($values as $value) {
-                        $params['body']['aggs']['aggs_all_filters']['filter']['bool']['filter'][$i]['nested']['query']['bool']['should'][] = [
-                            'term' => [
-                                'filters.value' => $value,
-                            ]
-                        ];
-                    }
-
-                    $params['body']['post_filter']['bool']['filter'][$i] = [
-                        'nested' => [
-                            'path' => 'filters',
-                            'query' => [
-                                'bool' => [
-                                    'must' => [
-                                        [
-                                            'term' => [
-                                                'filters.name' => $filter,
-                                            ]
-                                        ],
-                                    ],
-                                    'should' => [],
-                                    'minimum_should_match' => 1,
-                                ]
-                            ]
-                        ]
-                    ];
-
-                    foreach ($values as $value) {
-                        $params['body']['post_filter']['bool']['filter'][$i]['nested']['query']['bool']['should'][] = [
-                            'term' => [
-                                'filters.value' => $value,
-                            ]
-                        ];
-                    }
-
-                    $i++;
-                }
+        foreach ($request->except('page', 'search') as $field => $values) {
+            if (empty($values)) {
+                continue;
             }
+            $values = array_filter(explode(',', $values));
+            if (!count($values)) {
+                continue;
+            }
+
+            if (count($values) === 1) {
+                $params['body']['query']['bool']['must'][] = [
+                    'match' => [
+                        $field => $values[0],
+                    ],
+                ];
+                continue;
+            }
+
+            $values = array_map(function ($v) use ($field) {
+                return [
+                    'match' => [$field => $v]
+                ];
+            }, $values);
+
+            $params['body']['query']['bool'] = [
+                'match' => $values,
+                'minimum_should_match' => 1
+            ];
         }
-        echo '<pre>';
-        echo json_encode($params);
-        die;
+
+
         $res = $this->elasticsearch->search($params);
-        dd($res);
+
+        $total = Arr::get($res, 'hits.total.value');
+        $products = collect();
+
+        if ($total > 0) {
+            $products = Product::query()
+                ->with('media')
+                ->whereIn('id', Arr::pluck(Arr::get($res, 'hits.hits'), '_id'))
+                ->get();
+        }
+
+//        dd($this->searchWithFacets($request));
+
+        return new LengthAwarePaginator(
+            $products,
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => $request->url(),
+                'query' => $request->query->all(),
+                "pageName" => "page"
+            ]
+        );
+    }
+
+    public function searchWithFacets(Request $request): array
+    {
+        $params = [
+            'index' => self::INDEX,
+            'body' => [
+                'size' => 0, // Ми не хочемо отримувати результати, лише агрегації
+                'aggs' => [],
+            ],
+        ];
+
+        foreach ($request->except('page', 'search') as $field => $values) {
+            if (empty($values)) {
+                continue;
+            }
+            $values = array_filter(explode(',', $values));
+            if (!count($values)) {
+                continue;
+            }
+
+            $aggregation = [
+                'terms' => [
+                    'field' => $field,
+                ],
+            ];
+
+            $params['body']['aggs'][$field] = $aggregation;
+        }
+
+        $res = $this->elasticsearch->search($params);
+
+        $facets = [];
+
+        foreach ($request->except('page', 'search') as $field => $values) {
+            if (empty($values)) {
+                continue;
+            }
+            $values = array_filter(explode(',', $values));
+            if (!count($values)) {
+                continue;
+            }
+
+            $buckets = Arr::get($res, "aggregations.$field.buckets");
+            $facets[$field] = $buckets;
+        }
+
+        return $facets;
     }
 }

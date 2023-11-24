@@ -29,18 +29,13 @@ class CatalogController extends Controller
         }
 
         $request->merge(['category' => $slug]);
-        return $elasticsearh->search($request);
-        dd($elasticsearh->search($request));
+        $paginator = $elasticsearh->search($request);
 
         return Inertia::render('Catalog', [
             'title' => 'Catalog' . $category->name,
             'breadcrumbs' => $breadcrumbs->crumbs(),
             'category' => CategoryResource::make($category),
-            'products' => ProductResource::collection(
-                $category->products()
-                    ->with(['media'])
-                    ->get()
-            ),
+            'products' => ProductResource::collection($paginator->getCollection()),
             'categorySiblings' => CategoryResource::collection($categorySiblings),
         ]);
     }
