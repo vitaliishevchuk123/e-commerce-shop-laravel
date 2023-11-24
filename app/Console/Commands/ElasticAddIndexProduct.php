@@ -14,9 +14,10 @@ class ElasticAddIndexProduct extends Command
 
     public function handle(ElasticsearhService $elastic)
     {
-        $this->info('Start adding Elastic index to all products. This might take a while...');
+        $this->info('Start adding Elastic index to products. This might take a while...');
         foreach (Product::cursor() as $product) {
-            $elastic->indexProduct($product);
+            $result = $elastic->indexProduct($product);
+            $this->info("Product id {$product->id} - {$result}");
         }
         $this->info('Done!');
     }
