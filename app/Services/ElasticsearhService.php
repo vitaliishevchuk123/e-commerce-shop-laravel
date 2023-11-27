@@ -164,7 +164,7 @@ class ElasticsearhService
             }, $values);
 
             $params['body']['query']['bool'] = [
-                'match' => $values,
+                'should' => $values,
                 'minimum_should_match' => 1
             ];
         }

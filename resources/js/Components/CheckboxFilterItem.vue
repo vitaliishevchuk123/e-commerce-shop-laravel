@@ -1,25 +1,77 @@
 <script setup>
+import {onMounted, ref} from 'vue';
+import {usePage, router} from "@inertiajs/vue3";
 
-defineProps({
-        products: Array,
+const page = usePage();
+
+const selectedFilters = ref([]);
+
+const handleCheckboxChange = (value) => {
+    const queryParams = new URLSearchParams(page.url.split('?')[1])
+
+    if (queryParams.has(props.filter.code)) {
+        const filterValues = queryParams.getAll(props.filter.code)[0].split(',');
+
+        // Видалення значень, якщо вони вже присутні
+        if (filterValues.includes(value)) {
+            const updatedFilters = filterValues.filter((filter) => filter !== value);
+            queryParams.delete(props.filter.code);
+            if (updatedFilters.length) {
+                queryParams.append(props.filter.code, updatedFilters.join(','));
+            }
+
+        } else {
+            filterValues.push(value)
+            queryParams.delete(props.filter.code);
+            queryParams.append(props.filter.code, filterValues.join(','));
+        }
+
+    } else {
+        queryParams.append(props.filter.code, value);
+    }
+
+    updateUrlWithFilters(queryParams);
+};
+
+const updateUrlWithFilters = (searchParams) => {
+    const baseUrl = page.url.split('?')[0];
+    const updatedUrl = `${baseUrl}?${searchParams.toString()}`;
+    router.visit(updatedUrl);
+};
+
+const parseFiltersFromUrl = () => {
+    const queryParams = new URLSearchParams(page.url.split('?')[1]); // Отримуємо параметри з URL
+
+    if (queryParams.has(props.filter.code)) {
+        const filterValues = queryParams.get(props.filter.code).split(',');
+        selectedFilters.value.push(...filterValues);
+    }
+};
+
+onMounted(() => {
+    parseFiltersFromUrl(); // Викликаємо функцію для розбору параметрів з URL при завантаженні компонента
+});
+
+const props = defineProps({
+        filter: Object,
     }
 )
 </script>
 
 <template>
     <div class="filter-item text-sm">
-        <div class="property-name mb-2">Производители</div>
+        <div class="property-name mb-2">{{ filter.name }}</div>
         <ul>
-            <li class="mb-2">
+            <li v-for="(value, index) in filter.values" class="mb-2" :key="'value-'+index">
                 <label class="filter-label" for="gym80">
-                    <input class="rounded border-gray-300" type="checkbox" id="gym80" name="manufacturer" value="Gym80">
-                    Gym80
-                </label>
-            </li>
-            <li class="mb-2">
-                <label class="filter-label" for="cardioPower">
-                    <input class="rounded border-gray-300" type="checkbox" id="cardioPower" name="manufacturer" value="CardioPower">
-                    CardioPower
+                    <input class="rounded border-gray-300"
+                           type="checkbox"
+                           :id="`checkbox-${index}`"
+                           :value="value.code"
+                           v-model="selectedFilters"
+                           @change="handleCheckboxChange(value.code)"
+                    >
+                    {{ value.value }}
                 </label>
             </li>
         </ul>

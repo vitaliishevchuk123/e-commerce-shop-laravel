@@ -60,7 +60,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Розмір',
                     'ru' => 'Размер',
                 ],
-                'frontend_type' => 'radio',
+                'frontend_type' => 'checkbox',
                 'is_required' => true,
                 'is_filterable' => true,
                 'values' => [
@@ -93,7 +93,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Матеріал',
                     'ru' => 'Материал',
                 ],
-                'frontend_type' => 'text',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [
@@ -159,7 +159,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Стать',
                     'ru' => 'Пол',
                 ],
-                'frontend_type' => 'radio',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [
@@ -319,7 +319,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Країна походження',
                     'ru' => 'Страна происхождения',
                 ],
-                'frontend_type' => 'text',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [
@@ -352,7 +352,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Вікова група',
                     'ru' => 'Возрастная группа',
                 ],
-                'frontend_type' => 'radio',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [
@@ -380,7 +380,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Вага',
                     'ru' => 'Вес',
                 ],
-                'frontend_type' => 'text',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [
@@ -441,7 +441,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Тип застібки',
                     'ru' => 'Тип застежки',
                 ],
-                'frontend_type' => 'radio',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [
@@ -502,7 +502,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Паспорт',
                     'ru' => 'Паспорт',
                 ],
-                'frontend_type' => 'radio',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [
@@ -530,7 +530,7 @@ class AttributeSeeder extends Seeder
                     'uk' => 'Гарантія',
                     'ru' => 'Гарантия',
                 ],
-                'frontend_type' => 'text',
+                'frontend_type' => 'checkbox',
                 'is_required' => false,
                 'is_filterable' => true,
                 'values' => [

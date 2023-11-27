@@ -8,7 +8,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="grid grid-cols-4 gap-6 mr-4">
+    <div class="product-cards grid grid-cols-4 gap-6 mr-4">
         <ProductCard v-for="(product, index) in products"
                      :key="'catalog-product-' + index"
                      :product="product"
@@ -17,5 +17,8 @@ defineProps({
 </template>
 
 <style scoped lang="scss">
-
+.product-cards {
+    max-height: 100vh;
+    align-self: start;
+}
 </style>

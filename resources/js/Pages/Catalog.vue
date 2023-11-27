@@ -15,6 +15,7 @@ defineProps({
         category: Object,
         categorySiblings: Array,
         products: Array,
+        filters: Array,
     }
 )
 
@@ -32,7 +33,7 @@ defineProps({
             </div>
             <div class="grid grid-cols-[6fr,1fr] mb-6">
                 <CatalogProducts :products="products"/>
-                <CatalogFilters/>
+                <CatalogFilters :filters="filters"/>
             </div>
         </ContentWrapper>
     </MainLayout>

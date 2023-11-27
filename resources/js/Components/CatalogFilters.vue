@@ -5,17 +5,17 @@ import DefaultButton from "@/Components/DefaultButton.vue";
 import RangeFilterItem from "@/Components/RangeFilterItem.vue";
 
 defineProps({
-        products: Array,
+        filters: Array,
     }
 )
 </script>
 
 <template>
     <div>
-        <CheckboxFilterItem/>
-        <hr class="my-4"/>
-        <CheckboxFilterItem/>
-        <hr class="my-4"/>
+        <template v-for="(filter, index) in filters">
+            <CheckboxFilterItem v-if="filter.frontend_type === 'checkbox'" :filter="filter" :key="'attribute-'+index"/>
+            <hr class="my-4"/>
+        </template>
         <RangeFilterItem/>
         <hr class="my-4"/>
         <DefaultButton text="Очистить" :text-x-s="true"/>
