@@ -25,9 +25,8 @@ class ProductResource extends JsonResource
             'updated_at' => $this->updated_at,
             'categories_count' => $this->categories_count,
             'image' => $this->getFirstImgUrl(),
-
+            'attribute_values' => AttributeValueResource::collection($this->whenLoaded('attributeValues')),
             'brand_id' => $this->brand_id,
-
             'brand' => new BrandResource($this->whenLoaded('brand')),
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),
         ];

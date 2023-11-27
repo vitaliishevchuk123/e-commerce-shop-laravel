@@ -44,6 +44,11 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Category::class, 'product_category');
     }
 
+    public function attributeValues(): BelongsToMany
+    {
+        return $this->belongsToMany(AttributeValue::class, 'attribute_value_product');
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
@@ -63,11 +68,6 @@ class Product extends Model implements HasMedia
             get: static fn($value) => $value / 100,
             set: static fn($value) => $value * 100,
         );
-    }
-
-    public function attributeValues(): BelongsToMany
-    {
-        return $this->belongsToMany(AttributeValue::class);
     }
 
     public function labels(): BelongsToMany

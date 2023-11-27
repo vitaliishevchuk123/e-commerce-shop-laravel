@@ -19,26 +19,28 @@ defineProps({
             <img :src="product.image" class="object-cover" alt="Зображення продукту">
         </div>
         <div class="product-details flex flex-col h-full justify-between text-sm">
-            <div class="flex items-center gap-2 text-xs mb-2">
+            <div v-if="product.quantity > 0" class="flex items-center gap-2 text-xs mb-2">
                 <div class="flex items-center gap-1 color-green">
-                    <span>В наличии</span>
+                    <span>{{ __('In stock') }}</span>
                     <div class="flex gap-1">
                         <div class="green-dot"></div>
                         <div class="green-dot"></div>
                         <div class="green-dot"></div>
                     </div>
                 </div>
-                <span class="color-blue">Есть в шоу-руме</span>
+                <span class="color-blue">{{ __('In showroom') }}</span>
             </div>
 
             <h2 class="product-title text-md mb-2">{{ product.name }}</h2>
 
             <div class="main-properties mb-2">
-                <p class="property"><span class="text-gray-500">Тип дорожки:</span> Домашняя</p>
-                <p class="property"><span class="text-gray-500">Беговое полотно:</span> 1200 х 450 мм</p>
-                <p class="property"><span class="text-gray-500">Мощность двигателя:</span> 2,0 л.с.</p>
-                <p class="property"><span class="text-gray-500">Беговое полотно:</span> 2-х слойное</p>
-                <p class="property"><span class="text-gray-500">Производитель:</span> Cardio Power</p>
+                <p v-for="(attribute_value, index) in product.attribute_values.slice(0, 3)"
+                   :key="`index-${index}`"
+                    class="property"
+                >
+                    <span class="text-gray-500">{{ attribute_value.attribute.name }}:</span>
+                    {{ attribute_value.value }}
+                </p>
                 <div class="property flex items-center"><span class="text-gray-500 mr-1">Рейтинг:</span>
                     <div class="flex items-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">

@@ -177,7 +177,7 @@ class ElasticsearhService
 
         if ($total > 0) {
             $products = Product::query()
-                ->with('media')
+                ->with(['media', 'attributeValues', 'attributeValues.attribute'])
                 ->whereIn('id', Arr::pluck(Arr::get($res, 'hits.hits'), '_id'))
                 ->get();
         }
