@@ -173,6 +173,7 @@ return [
         App\Providers\Filament\AdminPanelProvider::class,
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        Weidner\Goutte\GoutteServiceProvider::class
     ])->toArray(),
 
     /*
@@ -187,6 +188,7 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
+        'Goutte' => Weidner\Goutte\GoutteFacade::class,
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 

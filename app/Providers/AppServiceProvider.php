@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
+use App\Services\Parser;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
-use GuzzleHttp\Client as HttpClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,9 +22,9 @@ class AppServiceProvider extends ServiceProvider
 
     private function bindSearchClient()
     {
-        $this->app->bind(Client::class, function ($app) {
+        $this->app->bind(Client::class, function () {
             return ClientBuilder::create()
-                ->setHosts($app['config']->get('services.elastic.hosts'))
+                ->setHosts(config('services.elastic.hosts'))
                 ->setBasicAuthentication('elastic', ' zcH-vO0emq1OnZaULGRS')
                 ->build();
         });
