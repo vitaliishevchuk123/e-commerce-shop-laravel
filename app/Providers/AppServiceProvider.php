@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\Parser;
+use App\Repositories\CatalogRepository;
+use App\Repositories\ElasticCatalogRepository;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\ClientBuilder;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -13,6 +14,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->bindSearchClient();
+        $this->app->bind(CatalogRepository::class, ElasticCatalogRepository::class);
     }
 
     public function boot(): void

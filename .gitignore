@@ -1,4 +1,5 @@
 /.phpunit.cache
+/drivers
 /bootstrap/ssr
 /bootstrap/ssr
 /node_modules

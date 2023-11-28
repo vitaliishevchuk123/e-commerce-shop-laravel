@@ -8,12 +8,13 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ProductParser extends AbstractParser
 {
+    protected bool $waitJs = true;
+
     public function parse()
     {
         foreach (Product::where('id', '>', 12)->cursor() as $product) {
             $this->saveProductDetails($product);
         }
-
     }
 
     public function saveProductDetails(Product $product)
@@ -24,7 +25,7 @@ class ProductParser extends AbstractParser
         $crawler = $this->request('GET', $url);
         $this->saveAttributes($crawler, $product);
         $this->saveImages($crawler, $product);
-        dd($crawler->filter('.p-header__title')->text(''));
+        dump("{$product->name} saved details");
     }
 
     public function saveAttributes(Crawler $crawler, Product $product)
@@ -36,7 +37,7 @@ class ProductParser extends AbstractParser
                     ->before(':')->trim();
                 $attValueName = str($node->filter('.p-char__value span')->text(''))
                     ->before(':')->trim();
-                if ($attValueName->isEmpty() || $attName->isEmpty()) {
+                if ($attValueName->isEmpty() || $attName->isEmpty() || $attValueName->length() > 70 || $attName->length() > 50) {
                     return;
                 }
 
@@ -54,19 +55,29 @@ class ProductParser extends AbstractParser
                     ]);
                 }
 
-                if ($value->wasRecentlyCreated) {
-                    $product->attributeValues()->attach($value);
-                }
+                $product->attributeValues()->syncWithoutDetaching($value);
             });
     }
 
     public function saveImages(Crawler $crawler, Product $product): void
     {
-        dd($crawler->filter('.swiper-wrapper')->count());
-        $crawler->filter('img')->each(function (Crawler $node) use ($product) {
-            dump($node->filter('img')->first()->attr('src'));
-//                    $product->addMediaFromUrl($node->attr('src'))
-//                        ->toMediaCollection();
-        });
+        if ($product->media->count() > 1) {
+            return;
+        }
+        $crawler->filter('.swiper-wrapper')->first()
+            ->filter('.swiper-slide')
+            ->each(function (Crawler $node) use ($product) {
+                try {
+                    $url = $node->filter('img')->first()?->attr('src');
+                    if (!$url) {
+                        return;
+                    }
+                    $product
+                        ->addMediaFromUrl($url)
+                        ->toMediaCollection();
+                } catch (\Throwable $e) {
+                    dump($e->getMessage());
+                }
+            });
     }
 }
