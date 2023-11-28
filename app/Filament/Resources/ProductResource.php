@@ -48,7 +48,7 @@ class ProductResource extends Resource
             Select::make('brand_id')
                 ->relationship('brand', 'name')
                 ->searchable()
-                ->required(),
+                ->nullable(),
 
             TextInput::make('sku')
                 ->required(),

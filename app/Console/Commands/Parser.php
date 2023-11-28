@@ -3,31 +3,25 @@
 namespace App\Console\Commands;
 
 use App\Parsers\CategoryParser;
+use App\Parsers\CatalogProductParser;
 use App\Parsers\ProductParser;
 use Illuminate\Console\Command;
 
 class Parser extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'app:parser';
+    protected $signature = 'app:parser {type}';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $description = 'Parser';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-//        app(CategoryParser::class)->parse();
-        app(ProductParser::class)->parse();
+        $parserType = $this->argument('type');
+
+        match ($parserType) {
+            'category' => app(CategoryParser::class)->parse(),
+            'catalog-product' => app(CatalogProductParser::class)->parse(),
+            'product' => app(ProductParser::class)->parse(),
+            default => $this->error('Invalid parser type'),
+        };
     }
 }

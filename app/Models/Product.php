@@ -34,6 +34,13 @@ class Product extends Model implements HasMedia
         'featured' => 'boolean',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Model $model) {
+            $model->generateSkuOnCreate();
+        });
+    }
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
@@ -65,9 +72,25 @@ class Product extends Model implements HasMedia
     protected function price(): Attribute
     {
         return Attribute::make(
-            get: static fn($value) => $value / 100,
-            set: static fn($value) => $value * 100,
+            get: static fn($value) => $value ? $value / 100 : null,
+            set: static fn($value) => $value ? $value * 100 : null,
         );
+    }
+
+    protected function salePrice(): Attribute
+    {
+        return Attribute::make(
+            get: static fn($value) => $value ? $value / 100 : null,
+            set: static fn($value) => $value ? $value * 100 : null,
+        );
+    }
+
+    protected function generateSkuOnCreate()
+    {
+        $this->sku = str($this->slug)
+            ->upper()
+            ->substr(0, 5)
+            ->append(rand(10000, 99999));
     }
 
     public function labels(): BelongsToMany

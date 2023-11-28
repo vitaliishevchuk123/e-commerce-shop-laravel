@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Attribute;
 use App\Models\AttributeValue;
+use App\Models\Category;
 use App\Models\Product;
 use Elastic\Elasticsearch\Client;
 use Illuminate\Http\Request;
@@ -84,14 +85,22 @@ class ElasticsearhService
                 ];
             })
             ->toArray();
-
+        $catSlugs = collect();
+        $product->categories
+            ->map(function (Category $category) use ($catSlugs) {
+                $catSlugs->push(...$category->parents(0)->pluck('slug'));
+                $catSlugs->push($category->slug);
+            });
         $body = [
             'name' => array_values($product->getTranslations('name')),
             'description' => array_values($product->getTranslations('description')),
-            'brand' => $product->brand->slug,
             'label' => $product->labels->pluck('code')->toArray(),
-            'category' => $product->categories->pluck('slug')->toArray(),
+            'category' => $catSlugs->unique()->toArray(),
         ];
+
+        if ($product->brand) {
+            $body['brand'] = $product->brand->slug;
+        }
 
         $body = array_merge($body, $attributeValues);
 

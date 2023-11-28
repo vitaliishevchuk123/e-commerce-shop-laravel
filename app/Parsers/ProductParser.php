@@ -2,75 +2,71 @@
 
 namespace App\Parsers;
 
-use App\Models\Category;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Attribute;
+use App\Models\Product;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ProductParser extends AbstractParser
 {
-    private string $imgDirectory = 'products';
-
     public function parse()
     {
-        $mainSportCat = Category::findBySlug('trenazhery');
-
-        if (!$mainSportCat) {
-            return;
-        }
-        foreach(Category::where('id', '>', $mainSportCat->id)->cursor() as $category) {
-            $this->saveProducts($category);
+        foreach (Product::where('id', '>', 12)->cursor() as $product) {
+            $this->saveProductDetails($product);
         }
 
     }
 
-    public function saveProducts(Category $category)
+    public function saveProductDetails(Product $product)
     {
-        $url = "https://epicentrk.ua/ua/shop/{$category->slug}/";
+        $url = "https://epicentrk.ua/ua/shop/{$product->slug}.html";
         dump($url);
+
         $crawler = $this->request('GET', $url);
-        $crawler->filter('.product-list-wrapper > .card__info')
-            ->each(function (Crawler $node) use ($category) {
-                $nodeImgLink = $node->filter('.card__photo')->first();
-                $slug = str($nodeImgLink->attr('href'))->after('shop/')->trim('.html');
-                dd($slug);
+        $this->saveAttributes($crawler, $product);
+        $this->saveImages($crawler, $product);
+        dd($crawler->filter('.p-header__title')->text(''));
+    }
 
-                //Save cat
-                $childCat = Category::firstOrCreate(
-                    [
-                        'slug' => $slug,
-                    ],
-                    [
-                        'name' => $imgNode->attr('alt'),
+    public function saveAttributes(Crawler $crawler, Product $product)
+    {
+        $crawler->filter('.p-block__row--char-all')
+            ->first()
+            ->filter('.p-char__item')->each(function (Crawler $node) use ($product) {
+                $attName = str($node->filter('.p-char__name-value')->text(''))
+                    ->before(':')->trim();
+                $attValueName = str($node->filter('.p-char__value span')->text(''))
+                    ->before(':')->trim();
+                if ($attValueName->isEmpty() || $attName->isEmpty()) {
+                    return;
+                }
+
+                $attribute = Attribute::where('name->uk', $attName)->first();
+                if (!$attribute) {
+                    $attribute = Attribute::create([
+                        'name' => $attName,
                     ]);
-                if($childCat->wasRecentlyCreated) {
-                    $childCat->appendTo($category);
                 }
 
-                //Save cat img
-                $imgUrl = $imgNode->attr('src');
-                if (!$childCat->image && !empty($imgUrl)) {
-                    $this->saveImg($imgUrl, $childCat);
+                $value = $attribute->values()->where('value->uk', $attValueName)->first();
+                if (!$value) {
+                    $value = $attribute->values()->create([
+                        'value' => $attValueName,
+                    ]);
                 }
-                dump("$childCat->name saved");
-                $this->saveCats($childCat);
+
+                if ($value->wasRecentlyCreated) {
+                    $product->attributeValues()->attach($value);
+                }
             });
     }
 
-    public function saveImg(string $url, Category $category): bool
+    public function saveImages(Crawler $crawler, Product $product): void
     {
-        $response = Http::get($url);
-        $extension = pathinfo($url, PATHINFO_EXTENSION);
-        $filePath = $this->imgDirectory . '/' . $category->slug . '.' . $extension;
-
-        if ($response->successful()) {
-            // Зберігання завантаженого зображення у вказану директорію
-            Storage::put('public/' . $filePath, $response->body());
-            $category->image = $filePath;
-            $category->save();
-            return true;
-        }
-
-        return false;
+        dd($crawler->filter('.swiper-wrapper')->count());
+        $crawler->filter('img')->each(function (Crawler $node) use ($product) {
+            dump($node->filter('img')->first()->attr('src'));
+//                    $product->addMediaFromUrl($node->attr('src'))
+//                        ->toMediaCollection();
+        });
     }
 }
