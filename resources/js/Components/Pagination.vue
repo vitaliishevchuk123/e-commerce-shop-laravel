@@ -13,22 +13,6 @@ const props = defineProps({
 
 const totalPages = computed(() => Math.ceil(props.total / props.perPage));
 
-const visiblePages = computed(() => {
-    const totalPagesValue = totalPages.value;
-    const current = props.currentPage;
-    let startPage = Math.max(1, current - 2);
-    let endPage = Math.min(totalPagesValue, current + 2);
-
-    if (startPage === 1) {
-        endPage = Math.min(5, totalPagesValue);
-    }
-
-    if (endPage === totalPagesValue) {
-        startPage = Math.max(1, totalPagesValue - 4);
-    }
-    return Array.from({length: (endPage - startPage) + 1}, (_, i) => startPage + i);
-});
-
 const generateUrl = (selectedPage) => {
     if ([props.currentPage, '...'].includes(selectedPage)) {
         return 'javascript:void(0);';
@@ -65,7 +49,9 @@ const paginationLinks = computed(() => {
 <template>
     <div class="grid gap-3">
         <div class="flex justify-center text-base">
-            <button class="show-more">
+            <button class="show-more"
+                    @click="$emit('showMore', generateUrl(currentPage + 1), totalPages)"
+            >
                 {{ __('Show more') }}
             </button>
         </div>

@@ -24,4 +24,9 @@ class CatalogController extends Controller
             'perPage' => $catalogRepository->perPage(),
         ]);
     }
+
+    public function loadMore(CatalogRepository $catalogRepository)
+    {
+        return ProductResource::collection($catalogRepository->categoryProducts()->getCollection());
+    }
 }
