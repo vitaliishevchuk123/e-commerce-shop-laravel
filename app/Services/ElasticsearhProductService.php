@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 
-class ElasticsearhService
+class ElasticsearhProductService
 {
     const INDEX = 'products';
 

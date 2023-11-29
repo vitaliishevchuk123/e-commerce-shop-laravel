@@ -10,7 +10,7 @@ use App\Models\Product;
 use Elastic\Elasticsearch\Client;
 use Illuminate\Http\Request;
 
-class ElasticsearhService2
+class ElasticsearhProductService2
 {
     const INDEX = 'ecom';
 

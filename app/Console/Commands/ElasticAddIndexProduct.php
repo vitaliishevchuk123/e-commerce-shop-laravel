@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Product;
-use App\Services\ElasticsearhService;
+use App\Services\ElasticsearhProductService;
 use Illuminate\Console\Command;
 
 class ElasticAddIndexProduct extends Command
@@ -12,7 +12,7 @@ class ElasticAddIndexProduct extends Command
 
     protected $description = 'Elastic add index product';
 
-    public function handle(ElasticsearhService $elastic)
+    public function handle(ElasticsearhProductService $elastic)
     {
         $this->info('Start adding Elastic index to products. This might take a while...');
 

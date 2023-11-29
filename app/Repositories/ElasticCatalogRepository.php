@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Helpers\Breadcrumbs;
 use App\Models\Attribute;
 use App\Models\Category;
-use App\Services\ElasticsearhService;
+use App\Services\ElasticsearhProductService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -16,7 +16,7 @@ class ElasticCatalogRepository implements CatalogRepository
 
     public function __construct(
         private Request             $request,
-        private ElasticsearhService $elasticsearh,
+        private ElasticsearhProductService $elasticsearh,
         private CategoryRepository  $categoryRepository,
         private Breadcrumbs         $breadcrumbs)
     {
