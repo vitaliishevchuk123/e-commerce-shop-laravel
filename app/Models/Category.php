@@ -75,7 +75,7 @@ class Category extends Model implements TreeConfigurable, Sortable
     public function getCatalogUrl(): string
     {
         return route('catalog', [
-            'slug' => $this->slug,
+            'category' => $this->slug,
         ]);
     }
 }

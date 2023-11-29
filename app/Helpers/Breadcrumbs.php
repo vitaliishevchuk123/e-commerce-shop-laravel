@@ -2,20 +2,25 @@
 
 namespace App\Helpers;
 
+
+use Illuminate\Support\Collection;
+
 class Breadcrumbs
 {
-    private array $crumbs = [];
+    public function __construct(private Collection $crumbs)
+    {
+    }
 
     public function add(string $title, ?string $url = 'javascript:void(0);'): static
     {
-        $this->crumbs[] = [
+        $this->crumbs->push([
             'title' => $title,
             'url' => $url,
-        ];
+        ]);
         return $this;
     }
 
-    public function crumbs(): array
+    public function crumbs(): Collection
     {
         return $this->crumbs;
     }

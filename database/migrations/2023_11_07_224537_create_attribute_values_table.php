@@ -10,7 +10,8 @@ return new class extends Migration {
 		Schema::create('attribute_values', function (Blueprint $table) {
 			$table->id();
 
-            $table->foreignIdFor(\App\Models\Attribute::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Attribute::class)
+                ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('code', 70);
             $table->jsonb('value');

@@ -15,7 +15,7 @@ defineProps({
                 <BrandItem v-for="(brand, index) in brands"
                            :key="index + '-brand-item'"
                            :wrapper-class="{
-                            'hidden lg:block xl:block': index >= 9 && index < 12,
+                            'hidden lg:block': index >= 9 && index < 12,
                             'hidden lg:hidden xl:block': index >= 12,
                             }"
                            :brand="brand"/>

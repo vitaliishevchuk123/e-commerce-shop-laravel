@@ -59,6 +59,7 @@ class CategoryRepository
         return Category::query()
             ->root()
             ->with('children')
+            ->orderBy('order')
             ->get();
     }
 }
