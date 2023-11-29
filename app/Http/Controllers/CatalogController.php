@@ -16,9 +16,12 @@ class CatalogController extends Controller
             'title' => 'Catalog' . $catalogRepository->category()->name,
             'breadcrumbs' => $catalogRepository->breadcrumbs()->crumbs(),
             'category' => CategoryResource::make($catalogRepository->category()),
-            'products' => ProductResource::collection($catalogRepository->categoryProducts()->getCollection()),
             'categorySiblings' => CategoryResource::collection($catalogRepository->getChildrenOrSiblingsAndSelfCats()),
-            'filters' => AttributeResource::collection($catalogRepository->filters())
+            'filters' => AttributeResource::collection($catalogRepository->filters()),
+            'products' => ProductResource::collection($catalogRepository->categoryProducts()->getCollection()),
+            'total' => $catalogRepository->categoryProducts()->total(),
+            'currentPage' => $catalogRepository->categoryProducts()->currentPage(),
+            'perPage' => $catalogRepository->perPage(),
         ]);
     }
 }

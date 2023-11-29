@@ -14,8 +14,11 @@ defineProps({
         breadcrumbs: Array,
         category: Object,
         categorySiblings: Array,
-        products: Array,
         filters: Array,
+        products: Array,
+        total: Number,
+        perPage: Number,
+        currentPage: Number,
     }
 )
 
@@ -32,7 +35,7 @@ defineProps({
                 <SortingFields/>
             </div>
             <div class="grid grid-cols-[6fr,1fr] mb-6">
-                <CatalogProducts :products="products"/>
+                <CatalogProducts :products="products" :per-page="perPage" :total="total" :current-page="currentPage"/>
                 <CatalogFilters :filters="filters"/>
             </div>
         </ContentWrapper>

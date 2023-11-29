@@ -18,4 +18,6 @@ interface CatalogRepository
     public function category(): Category;
 
     public function getChildrenOrSiblingsAndSelfCats(): Collection;
+
+    public function perPage(): int;
 }

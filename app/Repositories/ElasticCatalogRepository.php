@@ -13,12 +13,14 @@ use Illuminate\Support\Collection;
 class ElasticCatalogRepository implements CatalogRepository
 {
     private ?Category $category;
+    private ?LengthAwarePaginator $categoryProducts;
+    private int $perPage = 20;
 
     public function __construct(
-        private Request             $request,
+        private Request                    $request,
         private ElasticsearhProductService $elasticsearh,
-        private CategoryRepository  $categoryRepository,
-        private Breadcrumbs         $breadcrumbs)
+        private CategoryRepository         $categoryRepository,
+        private Breadcrumbs                $breadcrumbs)
     {
         $this->category = $categoryRepository->findBySlug($request->category);
         if (!$this->category) {
@@ -26,16 +28,25 @@ class ElasticCatalogRepository implements CatalogRepository
         }
     }
 
+    public function perPage(): int
+    {
+        return $this->perPage;
+    }
+
     public function getChildrenOrSiblingsAndSelfCats(): Collection
     {
-       return  $this->categoryRepository->getChildrenOrSiblingsAndSelf($this->category);
+        return $this->categoryRepository->getChildrenOrSiblingsAndSelf($this->category);
     }
 
 
     public function categoryProducts(): LengthAwarePaginator
     {
-        $this->request->merge(['category' => $this->category->slug]);
-        return $this->elasticsearh->search($this->request);
+        if (!isset($this->categoryProducts)) {
+            $this->request->merge(['category' => $this->category->slug]);
+            $this->categoryProducts = $this->elasticsearh->search($this->request, $this->perPage());
+        }
+
+        return $this->categoryProducts;
     }
 
     public function filters(): Collection

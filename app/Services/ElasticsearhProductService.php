@@ -118,9 +118,8 @@ class ElasticsearhProductService
         }
     }
 
-    public function search(Request $request): LengthAwarePaginator
+    public function search(Request $request, int $perPage = 10): LengthAwarePaginator
     {
-        $perPage = 10;
         $currentPage = $request->input('page', 1);
         $search = $request->input('search');
 
