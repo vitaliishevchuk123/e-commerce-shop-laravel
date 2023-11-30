@@ -18,7 +18,6 @@ class ElasticAddIndexProduct extends Command
 
         $elastic->deleteIndex();
         $elastic->createIndexWithMapping();
-        $elastic->putAttributeMapping();
 
         foreach (Product::cursor() as $product) {
             $result = $elastic->indexProduct($product);

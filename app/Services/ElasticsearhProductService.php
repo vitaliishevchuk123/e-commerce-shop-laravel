@@ -28,31 +28,6 @@ class ElasticsearhProductService
         $this->elasticsearch->indices()->delete($params);
     }
 
-    public function putAttributeMapping(): void
-    {
-        $properties = Attribute::get()->mapWithKeys(function (Attribute $attribute) {
-            return [
-                $attribute->code => [
-                    'type' => 'keyword'
-                ]
-            ];
-        })->toArray();
-
-        $mappingParams = [
-            'index' => 'products',
-            'body' => [
-                'properties' => $properties,
-            ],
-        ];
-
-        $this->elasticsearch->indices()->putMapping($mappingParams);
-
-        $params = ['index' => 'products'];
-
-        $this->elasticsearch->indices()->refresh($params);
-
-    }
-
     public function createIndexWithMapping(): void
     {
         $params = [
@@ -65,6 +40,13 @@ class ElasticsearhProductService
                         ],
                         'label' => [
                             'type' => 'keyword',
+                        ],
+                        'attributeValues' => [
+                            'type' => 'nested',
+                            'properties' => [
+                                'key' => ['type' => 'keyword'],
+                                'value' => ['type' => 'keyword'],
+                            ],
                         ],
                     ]
                 ]
@@ -79,9 +61,10 @@ class ElasticsearhProductService
         $product->load('attributeValues', 'attributeValues.attribute', 'labels', 'categories', 'brand');
 
         $attributeValues = $product->attributeValues
-            ->mapWithKeys(function (AttributeValue $value) {
+            ->map(function (AttributeValue $value) {
                 return [
-                    $value->attribute->code => $value->code
+                    'key' => $value->attribute->code,
+                    'value' => $value->code,
                 ];
             })
             ->toArray();
@@ -102,7 +85,8 @@ class ElasticsearhProductService
             $body['brand'] = $product->brand->slug;
         }
 
-        $body = array_merge($body, $attributeValues);
+//        $body = array_merge($body, $attributeValues);
+        $body['attributeValues'] = $attributeValues;
 
         $document = [
             'index' => self::INDEX,
@@ -122,6 +106,8 @@ class ElasticsearhProductService
     {
         $currentPage = $request->input('page', 1);
         $search = $request->input('search');
+        $category = $request->input('category');
+//        dd($this->getAttributesWithFacets($request));
 
         $params = [
             'index' => self::INDEX,
@@ -137,6 +123,7 @@ class ElasticsearhProductService
             ],
         ];
 
+        //search
         if ($search) {
             $params['body']['query']['bool']['must'][] = [
                 'multi_match' => [
@@ -147,7 +134,17 @@ class ElasticsearhProductService
             ];
         }
 
-        foreach ($request->except('page', 'search') as $field => $values) {
+        //category
+        if ($category) {
+            $params['body']['query']['bool']['must'][] = [
+                'match' => [
+                    'category' => $category,
+                ],
+            ];
+        }
+
+        //attributes
+        foreach ($request->except('page', 'search', 'category') as $field => $values) {
             if (empty($values)) {
                 continue;
             }
@@ -156,25 +153,26 @@ class ElasticsearhProductService
                 continue;
             }
 
-            if (count($values) === 1) {
-                $params['body']['query']['bool']['must'][] = [
-                    'match' => [
-                        $field => $values[0],
+            // Створення умов пошуку для кожного значення поля
+            $attributeConditions = [];
+
+            foreach ($values as $value) {
+                $attributeConditions[] = [
+                    'nested' => [
+                        'path' => 'attributeValues',
+                        'query' => [
+                            'bool' => [
+                                'must' => [
+                                    ['match' => ['attributeValues.key' => $field]],
+                                    ['match' => ['attributeValues.value' => $value]],
+                                ],
+                            ],
+                        ],
                     ],
                 ];
-                continue;
             }
 
-            $values = array_map(function ($v) use ($field) {
-                return [
-                    'match' => [$field => $v]
-                ];
-            }, $values);
-
-            $params['body']['query']['bool'] = [
-                'should' => $values,
-                'minimum_should_match' => 1
-            ];
+            $params['body']['query']['bool']['must'][] = ['bool' => ['should' => $attributeConditions]];
         }
 
 
@@ -251,5 +249,88 @@ class ElasticsearhProductService
         }
 
         return $facets;
+    }
+
+    private function getAttributesWithFacets(Request $request): array
+    {
+        $categorySlug = $request->category;
+
+        $attributeAggregationParams = [
+            'index' => self::INDEX,
+            'body' => [
+                'size' => 0,
+                'aggs' => [
+                    'attributes' => [
+                        'nested' => [
+                            'path' => 'attributeValues' // Перевірте цей шлях, він може змінюватися в залежності від вашої моделі
+                        ],
+                        'aggs' => [
+                            'unique_attributes' => [
+                                'terms' => [
+                                    'field' => 'attributeValues.attribute.code.keyword',
+                                    'size' => 10 // Розмір фасетів атрибутів
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'term' => [
+                                    'category' => $categorySlug
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $attributeAggregations = $this->elasticsearch->search($attributeAggregationParams);
+
+        $attributes = collect(Arr::get($attributeAggregations, 'aggregations.attributes.unique_attributes.buckets'))
+            ->pluck('key')
+            ->map(function ($attribute) use ($categorySlug) {
+                $facetParams = [
+                    'index' => self::INDEX,
+                    'body' => [
+                        'size' => 0,
+                        'aggs' => [
+                            'values_' . $attribute => [
+                                'terms' => [
+                                    'field' => $attribute . '.keyword',
+                                    'size' => 10 // Розмір фасетів
+                                ]
+                            ]
+                        ],
+                        'query' => [
+                            'bool' => [
+                                'must' => [
+                                    [
+                                        'term' => [
+                                            'category' => $categorySlug
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ];
+
+                $facetResults = $this->elasticsearch->search($facetParams);
+
+                $facets = Arr::get($facetResults, 'aggregations.values_' . $attribute . '.buckets');
+                $facetValues = collect($facets)->pluck('key')->toArray();
+
+                return [
+                    'attribute_code' => $attribute,
+                    'facet_values' => $facetValues,
+                ];
+            })
+            ->toArray();
+
+        return $attributes;
     }
 }
