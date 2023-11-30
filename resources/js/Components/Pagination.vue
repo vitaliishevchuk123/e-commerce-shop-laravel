@@ -47,15 +47,15 @@ const paginationLinks = computed(() => {
 </script>
 
 <template>
-    <div class="grid gap-3">
-        <div class="flex justify-center text-base">
+    <div v-if="total > 0" class="grid gap-3">
+        <div v-if="currentPage < totalPages" class="flex justify-center text-base">
             <button class="show-more"
                     @click="$emit('showMore', generateUrl(currentPage + 1), totalPages)"
             >
                 {{ __('Show more') }}
             </button>
         </div>
-        <div class="pagination flex justify-center text-base">
+        <div v-if="totalPages > 1" class="pagination flex justify-center text-base">
             <Link v-for="page in paginationLinks"
                   :href="generateUrl(page)"
                   :key="`page-${page}`">
