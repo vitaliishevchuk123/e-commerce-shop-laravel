@@ -49,10 +49,10 @@ class ElasticsearhProductService
                         'label' => [
                             'type' => 'keyword',
                         ],
-                        'attributeValues' => [
+                        'string_facets' => [
                             'type' => 'nested',
                             'properties' => [
-                                'key' => ['type' => 'keyword'],
+                                'name' => ['type' => 'keyword'],
                                 'value' => ['type' => 'keyword'],
                             ],
                         ],
@@ -71,7 +71,7 @@ class ElasticsearhProductService
         $attributeValues = $product->attributeValues
             ->map(function (AttributeValue $value) {
                 return [
-                    'key' => $value->attribute->code,
+                    'name' => $value->attribute->code,
                     'value' => $value->code,
                 ];
             })
@@ -93,7 +93,7 @@ class ElasticsearhProductService
             $body['brand'] = $product->brand->slug;
         }
 
-        $body['attributeValues'] = $attributeValues;
+        $body['string_facets'] = $attributeValues;
 
         $document = [
             'index' => self::INDEX,
@@ -114,7 +114,6 @@ class ElasticsearhProductService
         $currentPage = $request->input('page', 1);
         $search = $request->input('search');
         $category = $request->input('category');
-//        dump($this->getAttributesWithFacets($request));
 
         $params = [
             'index' => self::INDEX,
@@ -166,19 +165,19 @@ class ElasticsearhProductService
                 /**
                  * Кожна умова для пошуку атрибута конкретного продукта знаходиться всередині nested запиту Elasticsearch.
                  * Це означає, що ми шукаємо вкладене поле (nested field) в документах.
-                 * У цьому випадку, attributeValues - це вкладене поле, яке містить ключ-значення атрибутів.
+                 * У цьому випадку, string_facets - це вкладене поле, яке містить ключ-значення атрибутів.
                  * Ми створюємо умову, де:
-                 * attributeValues.key = $field (назвою атрибута) і
-                 * attributeValues.value = $value (значенням атрибута).
+                 * string_facets.name = $field (назвою атрибута) і
+                 * string_facets.value = $value (значенням атрибута).
                  */
                 $attributeConditions[] = [
                     'nested' => [
-                        'path' => 'attributeValues',
+                        'path' => 'string_facets',
                         'query' => [
                             'bool' => [
                                 'must' => [
-                                    ['match' => ['attributeValues.key' => $field]],
-                                    ['match' => ['attributeValues.value' => $value]],
+                                    ['match' => ['string_facets.name' => $field]],
+                                    ['match' => ['string_facets.value' => $value]],
                                 ],
                             ],
                         ],
@@ -195,26 +194,51 @@ class ElasticsearhProductService
         }
 
         //facets
+//            $params['body']['aggs'] = [
+//                'attributes' => [
+//                    'nested' => [
+//                        'path' => 'attributeValues'
+//                    ],
+//                    'aggs' => [
+//                        'unique_attributes' => [
+//                            'terms' => [
+//                                'field' => 'attributeValues.value',
+//                                'size' => 1000
+//                            ]
+//                        ]
+//                    ]
+//                ]
+//            ];
+
+        // Запит на агрегацію
         $params['body']['aggs'] = [
-            'attributes' => [
+            'aggs_text_facets' => [
                 'nested' => [
-                    'path' => 'attributeValues'
+                    'path' => 'string_facets',
                 ],
                 'aggs' => [
-                    'unique_attributes' => [
+                    'name' => [
                         'terms' => [
-                            'field' => 'attributeValues.value',
+                            'field' => 'string_facets.name',
                             'size' => 1000
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                        'aggs' => [
+                            'value' => [
+                                'terms' => [
+                                    'field' => 'string_facets.value',
+                                    'size' => 1000
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
 
         $res = $this->elasticsearch->search($params);
 
-        $this->processFacetsResult(collect(Arr::get($res, 'aggregations.attributes.unique_attributes.buckets')));
+        $this->processFacetsResult(collect(Arr::get($res, 'aggregations.aggs_text_facets.name.buckets')));
 
         $total = Arr::get($res, 'hits.total.value');
         $products = collect();
@@ -241,160 +265,31 @@ class ElasticsearhProductService
 
     public function processFacetsResult(Collection $facets): void
     {
-        $attributes = AttributeValue::query()
-            ->with('attribute')
+        $attributes = Attribute::query()
             ->whereIn('code', $facets->pluck('key')->toArray())
+            ->with(['values' => function ($q) use ($facets) {
+                $q->whereIn('code', $facets->pluck('value.buckets')->collapse()->pluck('key')->toArray());
+            }])
             ->get()
-            ->groupBy('attribute.id')
-            ->map(function (Collection $values) use ($facets) {
-                /** @var Attribute $attr */
-                $attr = $values->first()->attribute;
-                $attr->setRelation('values', $values->map(function (AttributeValue $v) use($facets) {
-                    $v->unsetRelation('attribute');
-                    return [
-                        'value' => $v,
-                        'facet_count' => $facets->where('key', $v->code)->first()['doc_count'],
-                    ];
-                }));
-                return $attr;
-            })->values();
+            ->map(function (Attribute $attribute) use ($facets) {
+                return [
+                    'attribute' => $attribute,
+                    'facet_count' => $facets->where('key', $attribute->code)->first()['doc_count'],
+                    'values' => $attribute->values->map(function (AttributeValue $value) use ($facets, $attribute) {
+                        return [
+                            'value' => $value,
+                            'facet_count' => collect($facets->where('key', $attribute->code)->first()['value']['buckets'])
+                                ->where('key', $value->code)->first()['doc_count'],
+                        ];
+                    }),
+                ];
+            })
+            ->values();
         $this->filters = $attributes;
     }
 
     public function getFilters(): Collection
     {
         return $this->filters;
-    }
-
-    public function searchWithFacets(Request $request): array
-    {
-        $params = [
-            'index' => self::INDEX,
-            'body' => [
-                'size' => 0, // Ми не хочемо отримувати результати, лише агрегації
-                'aggs' => [],
-            ],
-        ];
-
-        foreach ($request->except('page', 'search') as $field => $values) {
-            if (empty($values)) {
-                continue;
-            }
-            $values = array_filter(explode(',', $values));
-            if (!count($values)) {
-                continue;
-            }
-
-            $aggregation = [
-                'terms' => [
-                    'field' => $field,
-                ],
-            ];
-
-            $params['body']['aggs'][$field] = $aggregation;
-        }
-
-        $res = $this->elasticsearch->search($params);
-
-        $facets = [];
-
-        foreach ($request->except('page', 'search') as $field => $values) {
-            if (empty($values)) {
-                continue;
-            }
-            $values = array_filter(explode(',', $values));
-            if (!count($values)) {
-                continue;
-            }
-
-            $buckets = Arr::get($res, "aggregations.$field.buckets");
-            $facets[$field] = $buckets;
-        }
-
-        return $facets;
-    }
-
-    private function getAttributesWithFacets(Request $request): array
-    {
-        $categorySlug = $request->category;
-
-        $attributeAggregationParams = [
-            'index' => self::INDEX,
-            'body' => [
-                'size' => 0,
-                'aggs' => [
-                    'attributes' => [
-                        'nested' => [
-                            'path' => 'attributeValues'
-                        ],
-                        'aggs' => [
-                            'unique_attributes' => [
-                                'terms' => [
-                                    'field' => 'attributeValues.value',
-                                    'size' => 1000
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                'query' => [
-                    'bool' => [
-                        'must' => [
-                            [
-                                'term' => [
-                                    'category' => $categorySlug
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-
-        $attributeAggregations = $this->elasticsearch->search($attributeAggregationParams);
-        dd($attributeAggregations['aggregations']);
-
-        $attributes = collect(Arr::get($attributeAggregations, 'aggregations.attributes.unique_attributes.buckets'))
-            ->pluck('key')
-            ->map(function ($attribute) use ($categorySlug) {
-                $facetParams = [
-                    'index' => self::INDEX,
-                    'body' => [
-                        'size' => 0,
-                        'aggs' => [
-                            'values_' . $attribute => [
-                                'terms' => [
-                                    'field' => $attribute . '.keyword',
-                                    'size' => 10 // Розмір фасетів
-                                ]
-                            ]
-                        ],
-                        'query' => [
-                            'bool' => [
-                                'must' => [
-                                    [
-                                        'term' => [
-                                            'category' => $categorySlug
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ];
-
-                $facetResults = $this->elasticsearch->search($facetParams);
-
-                $facets = Arr::get($facetResults, 'aggregations.values_' . $attribute . '.buckets');
-                $facetValues = collect($facets)->pluck('key')->toArray();
-
-                return [
-                    'attribute_code' => $attribute,
-                    'facet_values' => $facetValues,
-                ];
-            })
-            ->toArray();
-
-        return $attributes;
     }
 }

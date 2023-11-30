@@ -12,13 +12,16 @@ class FilterCollection extends ResourceCollection
 {
     public function toArray(Request $request): array
     {
-        return $this->collection->map(function (Attribute $attribute) {
+        return $this->collection->map(function (array $arr) {
+            /** @var Attribute $value */
+            $attribute = $arr['attribute'];
             return [
                 'id' => $attribute->id,
                 'name' => $attribute->name,
                 'code' => $attribute->code,
                 'frontend_type' => $attribute->frontend_type,
-                'values' => $attribute->values->map(function (array $arr) {
+                'facet_count' => $arr['facet_count'],
+                'values' => $arr['values']->map(function (array $arr) {
                     /** @var AttributeValue $value */
                     $value = $arr['value'];
                     return [

@@ -60,7 +60,7 @@ const props = defineProps({
 
 <template>
     <div class="filter-item text-sm">
-        <div class="property-name mb-2">{{ filter.name }}</div>
+        <div class="property-name mb-2">{{ filter.name }} <span class="text-sm  text-gray-400">{{ filter.facet_count }}</span></div>
         <ul>
             <li v-for="(value, index) in filter.values" class="mb-2" :key="'value-'+index">
                 <label class="filter-label" for="gym80">
