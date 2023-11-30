@@ -4,10 +4,11 @@ import CheckboxFilterItem from "@/Components/CheckboxFilterItem.vue";
 import DefaultButton from "@/Components/DefaultButton.vue";
 import RangeFilterItem from "@/Components/RangeFilterItem.vue";
 
-defineProps({
+const props = defineProps({
         filters: Array,
     }
 )
+console.log(props.filters)
 </script>
 
 <template>

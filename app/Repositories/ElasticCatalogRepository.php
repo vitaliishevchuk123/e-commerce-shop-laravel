@@ -51,7 +51,7 @@ class ElasticCatalogRepository implements CatalogRepository
 
     public function filters(): Collection
     {
-        return Attribute::with('values')->get();
+        return $this->elasticsearh->getFilters();
     }
 
     public function breadcrumbs(): Breadcrumbs

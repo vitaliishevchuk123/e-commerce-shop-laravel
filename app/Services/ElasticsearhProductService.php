@@ -10,10 +10,13 @@ use Elastic\Elasticsearch\Client;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class ElasticsearhProductService
 {
     const INDEX = 'products';
+
+    private Collection $filters;
 
     public function __construct(private Client $elasticsearch)
     {
@@ -30,6 +33,11 @@ class ElasticsearhProductService
 
     public function createIndexWithMapping(): void
     {
+        /**
+         * 'type' => 'keyword'
+         * поля, що містять ключові слова або фіксований список значень.
+         * шукатиме по точному співпадінню
+         */
         $params = [
             'index' => self::INDEX,
             'body' => [
@@ -85,7 +93,6 @@ class ElasticsearhProductService
             $body['brand'] = $product->brand->slug;
         }
 
-//        $body = array_merge($body, $attributeValues);
         $body['attributeValues'] = $attributeValues;
 
         $document = [
@@ -107,7 +114,7 @@ class ElasticsearhProductService
         $currentPage = $request->input('page', 1);
         $search = $request->input('search');
         $category = $request->input('category');
-//        dd($this->getAttributesWithFacets($request));
+//        dump($this->getAttributesWithFacets($request));
 
         $params = [
             'index' => self::INDEX,
@@ -153,10 +160,17 @@ class ElasticsearhProductService
                 continue;
             }
 
-            // Створення умов пошуку для кожного значення поля
             $attributeConditions = [];
 
             foreach ($values as $value) {
+                /**
+                 * Кожна умова для пошуку атрибута конкретного продукта знаходиться всередині nested запиту Elasticsearch.
+                 * Це означає, що ми шукаємо вкладене поле (nested field) в документах.
+                 * У цьому випадку, attributeValues - це вкладене поле, яке містить ключ-значення атрибутів.
+                 * Ми створюємо умову, де:
+                 * attributeValues.key = $field (назвою атрибута) і
+                 * attributeValues.value = $value (значенням атрибута).
+                 */
                 $attributeConditions[] = [
                     'nested' => [
                         'path' => 'attributeValues',
@@ -172,11 +186,35 @@ class ElasticsearhProductService
                 ];
             }
 
+            /**
+             * Кожна умова для пошуку, яку ми створили в попередньому кроці, додається до $params['body']['query']['bool']['must'].
+             * Elasticsearch очікує параметри запиту в певному форматі, де 'bool' - це булева логіка, яка вказує, що всі умови мають виконатися.
+             * В даному випадку, 'should' вказує, що хоча б одна з умов повинна виконатися, щоб запит повернув результат.
+             */
             $params['body']['query']['bool']['must'][] = ['bool' => ['should' => $attributeConditions]];
         }
 
+        //facets
+        $params['body']['aggs'] = [
+            'attributes' => [
+                'nested' => [
+                    'path' => 'attributeValues'
+                ],
+                'aggs' => [
+                    'unique_attributes' => [
+                        'terms' => [
+                            'field' => 'attributeValues.value',
+                            'size' => 1000
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
 
         $res = $this->elasticsearch->search($params);
+
+        $this->processFacetsResult(collect(Arr::get($res, 'aggregations.attributes.unique_attributes.buckets')));
 
         $total = Arr::get($res, 'hits.total.value');
         $products = collect();
@@ -187,8 +225,6 @@ class ElasticsearhProductService
                 ->whereIn('id', Arr::pluck(Arr::get($res, 'hits.hits'), '_id'))
                 ->get();
         }
-
-//        dd($this->searchWithFacets($request));
 
         return new LengthAwarePaginator(
             $products,
@@ -201,6 +237,33 @@ class ElasticsearhProductService
                 "pageName" => "page"
             ]
         );
+    }
+
+    public function processFacetsResult(Collection $facets): void
+    {
+        $attributes = AttributeValue::query()
+            ->with('attribute')
+            ->whereIn('code', $facets->pluck('key')->toArray())
+            ->get()
+            ->groupBy('attribute.id')
+            ->map(function (Collection $values) use ($facets) {
+                /** @var Attribute $attr */
+                $attr = $values->first()->attribute;
+                $attr->setRelation('values', $values->map(function (AttributeValue $v) use($facets) {
+                    $v->unsetRelation('attribute');
+                    return [
+                        'value' => $v,
+                        'facet_count' => $facets->where('key', $v->code)->first()['doc_count'],
+                    ];
+                }));
+                return $attr;
+            })->values();
+        $this->filters = $attributes;
+    }
+
+    public function getFilters(): Collection
+    {
+        return $this->filters;
     }
 
     public function searchWithFacets(Request $request): array
@@ -262,13 +325,13 @@ class ElasticsearhProductService
                 'aggs' => [
                     'attributes' => [
                         'nested' => [
-                            'path' => 'attributeValues' // Перевірте цей шлях, він може змінюватися в залежності від вашої моделі
+                            'path' => 'attributeValues'
                         ],
                         'aggs' => [
                             'unique_attributes' => [
                                 'terms' => [
-                                    'field' => 'attributeValues.attribute.code.keyword',
-                                    'size' => 10 // Розмір фасетів атрибутів
+                                    'field' => 'attributeValues.value',
+                                    'size' => 1000
                                 ]
                             ]
                         ]
@@ -289,6 +352,7 @@ class ElasticsearhProductService
         ];
 
         $attributeAggregations = $this->elasticsearch->search($attributeAggregationParams);
+        dd($attributeAggregations['aggregations']);
 
         $attributes = collect(Arr::get($attributeAggregations, 'aggregations.attributes.unique_attributes.buckets'))
             ->pluck('key')

@@ -71,7 +71,7 @@ const props = defineProps({
                            v-model="selectedFilters"
                            @change="handleCheckboxChange(value.code)"
                     >
-                    {{ value.value }}
+                    {{ value.value }} <span class="text-gray-500 text-sm">({{ value.facet_count }})</span>
                 </label>
             </li>
         </ul>
