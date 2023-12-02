@@ -194,22 +194,6 @@ class ElasticsearhProductService
         }
 
         //facets
-//            $params['body']['aggs'] = [
-//                'attributes' => [
-//                    'nested' => [
-//                        'path' => 'attributeValues'
-//                    ],
-//                    'aggs' => [
-//                        'unique_attributes' => [
-//                            'terms' => [
-//                                'field' => 'attributeValues.value',
-//                                'size' => 1000
-//                            ]
-//                        ]
-//                    ]
-//                ]
-//            ];
-
         // Запит на агрегацію
         $params['body']['aggs'] = [
             'aggs_text_facets' => [
@@ -240,6 +224,8 @@ class ElasticsearhProductService
 
         $this->processFacetsResult(collect(Arr::get($res, 'aggregations.aggs_text_facets.name.buckets')));
 
+        $this->processNeighborFacets($request);
+
         $total = Arr::get($res, 'hits.total.value');
         $products = collect();
 
@@ -263,9 +249,142 @@ class ElasticsearhProductService
         );
     }
 
+    public function processNeighborFacets(Request $request): void
+    {
+        $search = $request->input('search');
+        $category = $request->input('category');
+
+        $startParams = [
+            'index' => self::INDEX,
+            'body' => [
+                'query' => [
+                    'bool' => [
+                        'must' => [],
+                    ],
+                ],
+                'size' => 0,
+            ],
+        ];
+
+        //search
+        if ($search) {
+            $startParams['body']['query']['bool']['must'][] = [
+                'multi_match' => [
+                    'query' => $search,
+                    'fields' => ['name', 'description'],
+                    'type' => 'most_fields', // Ви можете вибрати інший тип пошуку
+                ],
+            ];
+        }
+
+        //category
+        if ($category) {
+            $startParams['body']['query']['bool']['must'][] = [
+                'match' => [
+                    'category' => $category,
+                ],
+            ];
+        }
+
+        $requestFilterAllValues = Attribute::whereIn('code', array_keys($request->except('page', 'search', 'category')))
+            ->with('values')
+            ->get();
+        $requestSelectedFilters = collect($request->except('page', 'search', 'category'))
+            ->filter(fn($values) => !empty($values))
+            ->mapWithKeys(function ($values, $k) {
+                $values = array_filter(explode(',', $values));
+                return [$k => $values];
+            })
+            ->filter(fn($values) => !empty($values))->toArray();
+        if (!count($requestSelectedFilters)) {
+            return;
+        }
+        $neighborFilterValues = $requestFilterAllValues->mapWithKeys(function (Attribute $attribute) use ($requestSelectedFilters) {
+            return [
+                $attribute->code => $attribute->values
+                    ->pluck('code')
+                    ->filter(fn($v) => !in_array($v, $requestSelectedFilters[$attribute->code]))
+                    ->values()
+                    ->toArray()
+            ];
+        })->toArray();
+
+        $neighborParams = [];
+        foreach ($neighborFilterValues as $outerFilter => $outerFilterNeighborValues) {
+            if (!count($outerFilterNeighborValues)) {
+                continue;
+            }
+            $neighborParams[$outerFilter] = $startParams;
+            foreach ($requestSelectedFilters as $filter => $values) {
+                /**
+                 * Якщо фільтр поточний вибраний, то замість нього підставляємо сусідів
+                 */
+                if ($filter === $outerFilter) {
+                    $values = $outerFilterNeighborValues;
+                }
+                $attributeConditions = [];
+                foreach ($values as $value) {
+                    $attributeConditions[] = [
+                        'nested' => [
+                            'path' => 'string_facets',
+                            'query' => [
+                                'bool' => [
+                                    'must' => [
+                                        ['match' => ['string_facets.name' => $filter]],
+                                        ['match' => ['string_facets.value' => $value]],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ];
+
+
+                }
+                $neighborParams[$outerFilter]['body']['query']['bool']['must'][] = ['bool' => ['should' => $attributeConditions]];
+            }
+            $neighborParams[$outerFilter]['body']['aggs'] = [
+                'aggs_text_facets' => [
+                    'nested' => [
+                        'path' => 'string_facets',
+                    ],
+                    'aggs' => [
+                        'name' => [
+                            'terms' => [
+                                'field' => 'string_facets.name',
+                                'size' => 1000
+                            ],
+                            'aggs' => [
+                                'value' => [
+                                    'terms' => [
+                                        'field' => 'string_facets.value',
+                                        'size' => 1000
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
+        foreach ($neighborParams as $filer => $filterParams) {
+            $res = $this->elasticsearch->search($filterParams);
+            $resFacets = collect(Arr::get(collect(Arr::get($res, 'aggregations.aggs_text_facets.name.buckets'))
+                ->where('key', $filer)->first(), 'value.buckets'))
+                ->map(function ($v) use ($requestFilterAllValues, $filer) {
+                    return [
+                        'value' => $requestFilterAllValues
+                            ->where('code', $filer)
+                            ->first()->values->where('code', $v['key'])->first(),
+                        'facet_count' => $v['doc_count'],
+                    ];
+                });
+            $this->filters->where('attribute.code', $filer)->first()['values']->push(...$resFacets);
+        }
+    }
+
     public function processFacetsResult(Collection $facets): void
     {
-        $attributes = Attribute::query()
+        $this->filters = Attribute::query()
             ->whereIn('code', $facets->pluck('key')->toArray())
             ->with(['values' => function ($q) use ($facets) {
                 $q->whereIn('code', $facets->pluck('value.buckets')->collapse()->pluck('key')->toArray());
@@ -283,9 +402,7 @@ class ElasticsearhProductService
                         ];
                     }),
                 ];
-            })
-            ->values();
-        $this->filters = $attributes;
+            });
     }
 
     public function getFilters(): Collection

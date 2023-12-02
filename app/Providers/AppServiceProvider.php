@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(Client::class, function () {
             return ClientBuilder::create()
                 ->setHosts(config('services.elastic.hosts'))
-                ->setBasicAuthentication('elastic', ' zcH-vO0emq1OnZaULGRS')
+//                ->setBasicAuthentication('elastic', 'zcH-vO0emq1OnZaULGRS')
                 ->build();
         });
     }

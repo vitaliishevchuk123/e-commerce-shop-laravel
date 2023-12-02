@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\AttributeResource;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\FilterCollection;
 use App\Http\Resources\ProductResource;
