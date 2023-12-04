@@ -13,6 +13,8 @@ interface CatalogRepository
 
     public function filters();
 
+    public function prices();
+
     public function breadcrumbs(): Breadcrumbs;
 
     public function category(): Category;

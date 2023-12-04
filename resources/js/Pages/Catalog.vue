@@ -15,6 +15,7 @@ defineProps({
         category: Object,
         categorySiblings: Array,
         filters: Array,
+        prices: Object,
         products: Array,
         total: Number,
         perPage: Number,
@@ -36,7 +37,7 @@ defineProps({
             </div>
             <div class="grid grid-cols-[6fr,1fr] mb-6">
                 <CatalogProducts :products="products" :per-page="perPage" :total="total" :current-page="currentPage"/>
-                <CatalogFilters :filters="filters"/>
+                <CatalogFilters :filters="filters" :prices="prices"/>
             </div>
         </ContentWrapper>
     </MainLayout>

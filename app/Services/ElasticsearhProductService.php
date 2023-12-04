@@ -17,6 +17,7 @@ class ElasticsearhProductService
     const INDEX = 'products';
 
     private Collection $filters;
+    private array $prices;
 
     public function __construct(private Client $elasticsearch)
     {
@@ -45,6 +46,9 @@ class ElasticsearhProductService
                     'properties' => [
                         'category' => [
                             'type' => 'keyword',
+                        ],
+                        'price' => [
+                            'type' => 'double',
                         ],
                         'label' => [
                             'type' => 'keyword',
@@ -87,6 +91,7 @@ class ElasticsearhProductService
             'description' => array_values($product->getTranslations('description')),
             'label' => $product->labels->pluck('code')->toArray(),
             'category' => $catSlugs->unique()->toArray(),
+            'price' => $product->sale_price,
         ];
 
         if ($product->brand) {
@@ -222,7 +227,17 @@ class ElasticsearhProductService
                                         ],
                                     ],
                                 ],
-                            ]
+                            ],
+                            'min_price' => [
+                                'min' => [
+                                    'field' => 'price'
+                                ]
+                            ],
+                            'max_price' => [
+                                'max' => [
+                                    'field' => 'price'
+                                ]
+                            ],
                         ]
                     ],
                 ],
@@ -373,12 +388,14 @@ class ElasticsearhProductService
 
     public function processFacetsResult(array $facets, Collection $requestFilterAllValues): void
     {
+        //founded_products_aggs
         $foundedProductsAggs = collect(Arr::get($facets, 'founded_products_aggs.aggs_text_facets.name.buckets'));
         $this->filters = Attribute::query()
             ->whereIn('code', $foundedProductsAggs->pluck('key')->toArray())
             ->with(['values' => function ($q) use ($foundedProductsAggs) {
-                $q->whereIn('code', $foundedProductsAggs->pluck('value.buckets')->collapse()->pluck('key')->toArray());
+                $q->whereIn('code', $foundedProductsAggs->pluck('value.buckets')->collapse()->pluck('key')->toArray())->orderBy('code');
             }])
+            ->orderBy('code')
             ->get()
             ->map(function (Attribute $attribute) use ($foundedProductsAggs) {
                 return [
@@ -393,7 +410,11 @@ class ElasticsearhProductService
                     }),
                 ];
             });
+        //price aggs
+        $this->prices['max_price'] = str(Arr::get($facets, 'founded_products_aggs.max_price.value'))->toInteger();
+        $this->prices['min_price'] = str(Arr::get($facets, 'founded_products_aggs.min_price.value'))->toInteger();
 
+        //neighbor aggs
         Arr::forget($facets, ['meta', 'doc_count', 'founded_products_aggs']);
         foreach ($facets as $filerName => $res) {
             $resFacets = collect(Arr::get(collect(Arr::get($res, 'aggs_text_facets.filtered_name.name.buckets'))
@@ -415,5 +436,10 @@ class ElasticsearhProductService
     public function getFilters(): Collection
     {
         return $this->filters;
+    }
+
+    public function getPrices(): array
+    {
+        return $this->prices;
     }
 }

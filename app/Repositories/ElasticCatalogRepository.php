@@ -54,6 +54,11 @@ class ElasticCatalogRepository implements CatalogRepository
         return $this->elasticsearh->getFilters();
     }
 
+    public function prices(): array
+    {
+        return $this->elasticsearh->getPrices();
+    }
+
     public function breadcrumbs(): Breadcrumbs
     {
         if ($this->breadcrumbs->crumbs()->isEmpty()) {

@@ -19,6 +19,7 @@ class CatalogController extends Controller
             'categorySiblings' => CategoryResource::collection($catalogRepository->getChildrenOrSiblingsAndSelfCats()),
             'products' => ProductResource::collection($catalogRepository->categoryProducts()->getCollection()),
             'filters' => FilterCollection::make($catalogRepository->filters()),
+            'prices' => $catalogRepository->prices(),
             'total' => $catalogRepository->categoryProducts()->total(),
             'currentPage' => $catalogRepository->categoryProducts()->currentPage(),
             'perPage' => $catalogRepository->perPage(),

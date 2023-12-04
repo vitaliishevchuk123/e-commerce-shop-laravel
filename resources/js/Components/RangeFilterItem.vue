@@ -1,46 +1,47 @@
 <script setup>
 import {ref} from "vue";
-import Slider from '@vueform/slider'
+import Slider from '@vueform/slider';
+import DefaultButton from "@/Components/DefaultButton.vue";
 
-const price = ref([minPrice, maxPrice]);
-const minPrice = 0;
-const maxPrice = 1000;
-
-const updatePrice = (value, index) => {
-    price.value[index] = parseFloat(value);
-};
-
-defineProps({
-        filters: Array,
+const props = defineProps({
+        title: String,
+        minValue: Number,
+        maxValue: Number,
     }
 )
+
+const value = ref([props.minValue, props.maxValue]);
+const updateValue = (value, index) => {
+    value.value[index] = parseFloat(value);
+};
 </script>
 
 <template>
     <div class="filter-item text-sm">
-        <div class="property-name mb-2">Цена</div>
+        <div class="property-name mb-2">{{ title }}</div>
         <div>
-            <div class="flex items-center mb-6">
-                <template v-for="(value, index) in price" :key="'filter'+index">
+            <div class="flex items-center mb-6 gap-2">
+                <template v-for="(val, index) in value" :key="'filter'+index">
                     <input
-                        class="range-input text-sm w-16 p-1 rounded border-gray-300"
+                        class="range-input text-sm w-20 p-1 rounded border-gray-300"
                         type="number"
-                        :value="value"
-                        :min="minPrice"
-                        :max="maxPrice"
-                        @input="updatePrice($event.target.value, index)"
+                        :value="val"
+                        :min="minValue"
+                        :max="maxValue"
+                        @input="updateValue($event.target.value, index)"
                     />
-                    <template v-if="index === 0 && price.length > 1">
-                        <div class="mx-2 w-4 h-[0.1em] bg-gray-500"></div>
+                    <template v-if="index === 0 && value.length > 1">
+                        <div class="w-4 h-[0.1em] bg-gray-500"></div>
                     </template>
                 </template>
+                <DefaultButton class="h-[29px]" text="ОК" :text-x-s="true"/>
             </div>
-            <Slider v-model="price"
+            <Slider v-model="value"
                     tooltipPosition="bottom"
                     showTooltip="drag"
                     class="slider-red mx-2"
-                    :min="minPrice"
-                    :max="maxPrice"
+                    :min="minValue"
+                    :max="maxValue"
             />
         </div>
     </div>
