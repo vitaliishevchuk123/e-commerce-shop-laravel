@@ -95,7 +95,7 @@ onMounted(() => {
          }">
         <div>
             <!-- Modal content -->
-            <div class="top-40 relative w-full max-w-7xl max-h-full mx-auto bg-white rounded-lg flex">
+            <div class="mt-40 relative w-full max-w-7xl max-h-full mx-auto bg-white rounded-lg flex">
                 <button type="button"
                         @click="closeModal"
                         class="absolute text-xl top-0 right-0 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"

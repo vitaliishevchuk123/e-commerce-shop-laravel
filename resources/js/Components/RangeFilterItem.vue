@@ -1,10 +1,12 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import Slider from '@vueform/slider';
 import DefaultButton from "@/Components/DefaultButton.vue";
+import {router} from "@inertiajs/vue3";
 
 const props = defineProps({
         title: String,
+        queryParam: String,
         minValue: Number,
         maxValue: Number,
     }
@@ -13,6 +15,24 @@ const props = defineProps({
 const value = ref([props.minValue, props.maxValue]);
 const updateValue = (value, index) => {
     value.value[index] = parseFloat(value);
+};
+
+onMounted(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has(props.queryParam)) {
+        const paramValue = urlParams.get(props.queryParam);
+        const [minVal, maxVal] = paramValue.split('_').map(parseFloat);
+        value.value = [minVal, maxVal];
+    }
+});
+
+const goToUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    params.set(props.queryParam, `${value.value[0]}_${value.value[1]}`);
+    const newParams = params.toString();
+    const currentURL = new URL(window.location.href);
+    currentURL.search = newParams;
+    router.visit(currentURL.href);
 };
 </script>
 
@@ -34,7 +54,7 @@ const updateValue = (value, index) => {
                         <div class="w-4 h-[0.1em] bg-gray-500"></div>
                     </template>
                 </template>
-                <DefaultButton class="h-[29px]" text="ОК" :text-x-s="true"/>
+                <DefaultButton class="h-[29px]" text="ОК" :text-x-s="true" @click="goToUrl"/>
             </div>
             <Slider v-model="value"
                     tooltipPosition="bottom"

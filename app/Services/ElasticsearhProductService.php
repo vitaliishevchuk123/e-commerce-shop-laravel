@@ -119,6 +119,11 @@ class ElasticsearhProductService
         $currentPage = $request->input('page', 1);
         $search = $request->input('search');
         $category = $request->input('category');
+        $priceMinMax = $request->input('price');
+        if ($priceMinMax) {
+            $priceMinMax = str($priceMinMax)->explode('_')
+                ->map(fn($v) => str($v)->toInteger());
+        }
 
         $params = [
             'index' => self::INDEX,
@@ -154,8 +159,18 @@ class ElasticsearhProductService
             ];
         }
 
+        //min max price
+        if ($priceMinMax && $priceMinMax->count() === 2) {
+            $params['body']['query']['bool']['filter']['range'] = [
+                'price' => [
+                    'gte' => $priceMinMax[0],
+                    'lte' => $priceMinMax[1]
+                ],
+            ];
+        }
+
         //attributes
-        foreach ($request->except('page', 'search', 'category') as $field => $values) {
+        foreach ($request->except('page', 'search', 'category', 'price') as $field => $values) {
             if (empty($values)) {
                 continue;
             }
@@ -228,23 +243,40 @@ class ElasticsearhProductService
                                     ],
                                 ],
                             ],
-                            'min_price' => [
-                                'min' => [
-                                    'field' => 'price'
-                                ]
-                            ],
-                            'max_price' => [
-                                'max' => [
-                                    'field' => 'price'
-                                ]
-                            ],
-                        ]
+                        ],
                     ],
                 ],
             ],
         ];
 
-        $requestFilterAllValues = Attribute::whereIn('code', array_keys($request->except('page', 'search', 'category')))
+        // min max price
+        $minMaxPriceFilter = $params['body']['query'];
+        if (Arr::has($minMaxPriceFilter, 'bool.filter.range.price')) {
+            Arr::forget($minMaxPriceFilter, 'bool.filter.range.price');
+            if (!count(Arr::get($minMaxPriceFilter, 'bool.filter.range'))) {
+                Arr::forget($minMaxPriceFilter, 'bool.filter.range');
+            }
+            if (!count(Arr::get($minMaxPriceFilter, 'bool.filter'))) {
+                Arr::forget($minMaxPriceFilter, 'bool.filter');
+            }
+        }
+        $params['body']['aggs']['global_agg']['aggs']['min_max_price'] = [
+            'filter' => $minMaxPriceFilter,
+            'aggs' => [
+                'min_price' => [
+                    'min' => [
+                        'field' => 'price'
+                    ]
+                ],
+                'max_price' => [
+                    'max' => [
+                        'field' => 'price'
+                    ]
+                ],
+            ],
+        ];
+
+        $requestFilterAllValues = Attribute::whereIn('code', array_keys($request->except('page', 'search', 'category', 'price')))
             ->with('values')
             ->get();
 
@@ -305,7 +337,7 @@ class ElasticsearhProductService
             ];
         }
 
-        $requestSelectedFilters = collect($request->except('page', 'search', 'category'))
+        $requestSelectedFilters = collect($request->except('page', 'search', 'category', 'price'))
             ->filter(fn($values) => !empty($values))
             ->mapWithKeys(function ($values, $k) {
                 $values = array_filter(explode(',', $values));
@@ -411,11 +443,11 @@ class ElasticsearhProductService
                 ];
             });
         //price aggs
-        $this->prices['max_price'] = str(Arr::get($facets, 'founded_products_aggs.max_price.value'))->toInteger();
-        $this->prices['min_price'] = str(Arr::get($facets, 'founded_products_aggs.min_price.value'))->toInteger();
+        $this->prices['max_price'] = str(Arr::get($facets, 'min_max_price.max_price.value'))->toInteger();
+        $this->prices['min_price'] = str(Arr::get($facets, 'min_max_price.min_price.value'))->toInteger();
 
         //neighbor aggs
-        Arr::forget($facets, ['meta', 'doc_count', 'founded_products_aggs']);
+        Arr::forget($facets, ['meta', 'doc_count', 'founded_products_aggs', 'min_max_price']);
         foreach ($facets as $filerName => $res) {
             $resFacets = collect(Arr::get(collect(Arr::get($res, 'aggs_text_facets.filtered_name.name.buckets'))
                 ->where('key', $filerName)

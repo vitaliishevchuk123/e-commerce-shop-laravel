@@ -34,9 +34,18 @@ const handleCheckboxChange = (value) => {
 };
 
 const updateUrlWithFilters = (searchParams) => {
-    const baseUrl = page.url.split('?')[0];
-    const updatedUrl = `${baseUrl}?${searchParams.toString()}`;
-    router.visit(updatedUrl);
+    const params = new URLSearchParams(window.location.search);
+    searchParams.forEach((value, key) => {
+        params.set(key, value);
+    });
+
+    const newParams = params.toString();
+    const currentURL = new URL(window.location.href);
+
+    currentURL.search = newParams;
+    // window.history.pushState({}, '', currentURL);
+
+    router.visit(currentURL.href);
 };
 
 const parseFiltersFromUrl = () => {
