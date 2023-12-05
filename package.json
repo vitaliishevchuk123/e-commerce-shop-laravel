@@ -28,7 +28,9 @@
         "@vueuse/motion": "^2.0.0",
         "flowbite-vue": "^0.1.0",
         "less": "^4.2.0",
+        "mitt": "^3.0.1",
         "swiper": "^11.0.4",
-        "tw-elements": "^1.0.0"
+        "tw-elements": "^1.0.0",
+        "vuex": "^4.1.0"
     }
 }

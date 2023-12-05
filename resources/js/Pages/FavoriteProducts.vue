@@ -1,0 +1,36 @@
+<script setup>
+import {Head} from '@inertiajs/vue3'
+import MainLayout from "@/Layouts/MainLayout.vue";
+import Breadcrumbs from "@/Components/Breadcrumbs.vue";
+import MainTitle from "@/Components/MainTitle.vue";
+import ContentWrapper from "@/Components/ContentWrapper.vue";
+import ProductCard from "@/Components/ProductCard.vue";
+
+const props = defineProps({
+        title: String,
+        breadcrumbs: Array,
+        favoriteProducts: Array,
+    }
+)
+</script>
+
+<template>
+    <Head :title="$page.props.title"/>
+    <MainLayout>
+        <ContentWrapper class="mt-6">
+            <Breadcrumbs :breadcrumbs="breadcrumbs" class="mb-6"/>
+            <MainTitle title="Улюблені"/>
+            <div class="product-cards grid grid-cols-4 gap-6 mr-4 mb-6">
+                <ProductCard v-for="(product, index) in favoriteProducts"
+                             :key="'favorite-product-' + index"
+                             :product="product"
+                />
+            </div>
+        </ContentWrapper>
+    </MainLayout>
+</template>
+
+
+<style scoped>
+
+</style>

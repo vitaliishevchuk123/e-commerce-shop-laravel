@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\FavoriteProductController;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SwitchLocaleController;
@@ -33,6 +34,11 @@ Route::group([
     Route::controller(CatalogController::class)->group(function () {
         Route::get('catalog/{category}', 'index')->name('catalog');
         Route::get('catalog-load-more/{category}', 'loadMore')->name('catalog-load-more');
+    });
+
+    Route::controller(FavoriteProductController::class)->group(function () {
+        Route::get('/favorites', 'index')->name('favorites');
+        Route::post('/favorites/{product}', 'toggle')->name('favorites.toggle');
     });
 });
 

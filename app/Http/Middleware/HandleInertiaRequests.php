@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Http\Resources\CategoryResource;
 use App\Repositories\CategoryRepository;
+use App\Repositories\FavoriteProductsRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $catRepository = app(CategoryRepository::class);
+        $favoriteRepository = app(FavoriteProductsRepository::class);
         return [
             ...parent::share($request),
             'auth' => [
@@ -66,8 +68,8 @@ class HandleInertiaRequests extends Middleware
                     true
                 );
             },
-
-            'languageSelector' => $this->generateSwitchLinks()
+            'languageSelector' => $this->generateSwitchLinks(),
+            'favoriteIds' => $favoriteRepository->getIds($request),
         ];
     }
 
