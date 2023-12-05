@@ -3,9 +3,10 @@ const myMixin = {
         /**
          * Translate the given key.
          */
-        __(key, replace = {}) {
-            let translation = this.$page.props.language[key]
-                ? this.$page.props.language[key]
+        __(key, replace = {}, usePage = null) {
+            const page = usePage ?? this.$page;
+            let translation = page.props.language[key]
+                ? page.props.language[key]
                 : key
 
             Object.keys(replace).forEach(function (key) {

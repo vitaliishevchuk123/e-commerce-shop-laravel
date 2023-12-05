@@ -23,6 +23,16 @@ class ElasticsearhProductService
     {
     }
 
+    public function availableSortFields(): Collection
+    {
+        return collect([
+            'popularity' => 'created_at',
+            'novelty' => 'created_at',
+            'price' => 'price',
+            'rating' => 'created_at',
+        ]);
+    }
+
     public function deleteIndex()
     {
         $params = [
@@ -46,6 +56,9 @@ class ElasticsearhProductService
                     'properties' => [
                         'category' => [
                             'type' => 'keyword',
+                        ],
+                        'created_at' => [
+                            'type' => 'date',
                         ],
                         'price' => [
                             'type' => 'double',
@@ -92,6 +105,7 @@ class ElasticsearhProductService
             'label' => $product->labels->pluck('code')->toArray(),
             'category' => $catSlugs->unique()->toArray(),
             'price' => $product->sale_price,
+            'created_at' => $product->created_at,
         ];
 
         if ($product->brand) {
@@ -135,9 +149,24 @@ class ElasticsearhProductService
                 ],
                 'size' => $perPage,
                 'from' => ($currentPage - 1) * $perPage,
-
+                'sort' => [],
             ],
         ];
+
+        // Sorting
+        if ($request->input('sort')) {
+            [$field, $direction] = str($request->input('sort'))->explode('_');
+            if (in_array($direction, ['asc', 'desc']) && $this->availableSortFields()->has($field)) {
+                $params['body']['sort'] = [
+                    [
+                        $this->availableSortFields()->get($field) => [
+                            'order' => $direction,
+                        ]
+                    ]
+                ];
+            }
+        }
+
 
         //search
         if ($search) {
@@ -170,7 +199,7 @@ class ElasticsearhProductService
         }
 
         //attributes
-        foreach ($request->except('page', 'search', 'category', 'price') as $field => $values) {
+        foreach ($request->except('page', 'search', 'category', 'price', 'sort') as $field => $values) {
             if (empty($values)) {
                 continue;
             }
@@ -276,7 +305,7 @@ class ElasticsearhProductService
             ],
         ];
 
-        $requestFilterAllValues = Attribute::whereIn('code', array_keys($request->except('page', 'search', 'category', 'price')))
+        $requestFilterAllValues = Attribute::whereIn('code', array_keys($request->except('page', 'search', 'category', 'price', 'sort')))
             ->with('values')
             ->get();
 
@@ -293,9 +322,12 @@ class ElasticsearhProductService
         $products = collect();
 
         if ($total > 0) {
+            $idArray = Arr::pluck(Arr::get($res, 'hits.hits'), '_id');
+
             $products = Product::query()
                 ->with(['media', 'attributeValues', 'attributeValues.attribute'])
-                ->whereIn('id', Arr::pluck(Arr::get($res, 'hits.hits'), '_id'))
+                ->whereIn('id', $idArray)
+                ->orderByRaw("FIELD(id, " . implode(",", $idArray) . ")")
                 ->get();
         }
 
@@ -337,7 +369,7 @@ class ElasticsearhProductService
             ];
         }
 
-        $requestSelectedFilters = collect($request->except('page', 'search', 'category', 'price'))
+        $requestSelectedFilters = collect($request->except('page', 'search', 'category', 'price', 'sort'))
             ->filter(fn($values) => !empty($values))
             ->mapWithKeys(function ($values, $k) {
                 $values = array_filter(explode(',', $values));
