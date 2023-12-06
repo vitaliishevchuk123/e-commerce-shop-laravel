@@ -12,6 +12,7 @@ class ProductResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'brand_id' => $this->brand_id,
             'sku' => $this->sku,
             'name' => $this->name,
             'slug' => $this->slug,
@@ -26,9 +27,9 @@ class ProductResource extends JsonResource
             'categories_count' => $this->categories_count,
             'image' => $this->getFirstImgUrl(),
             'attribute_values' => AttributeValueResource::collection($this->whenLoaded('attributeValues')),
-            'brand_id' => $this->brand_id,
             'brand' => new BrandResource($this->whenLoaded('brand')),
             'categories' => CategoryResource::collection($this->whenLoaded('categories')),
+            'media' => MediaResource::collection($this->whenLoaded('media'))
         ];
     }
 }
