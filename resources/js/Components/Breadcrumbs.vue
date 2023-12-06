@@ -1,6 +1,7 @@
 <script setup>
-import {Link} from '@inertiajs/vue3'
 
+
+import Link from "@/Components/Link.vue";
 
 const props = defineProps({
     breadcrumbs: {

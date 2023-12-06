@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Helpers\Breadcrumbs;
-use App\Models\Attribute;
 use App\Models\Category;
 use App\Services\ElasticsearhProductService;
 use Illuminate\Http\Request;

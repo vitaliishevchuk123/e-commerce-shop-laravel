@@ -3,6 +3,7 @@
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\FavoriteProductController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SwitchLocaleController;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,8 @@ Route::group([
         Route::get('catalog/{category}', 'index')->name('catalog');
         Route::get('catalog-load-more/{category}', 'loadMore')->name('catalog-load-more');
     });
+
+    Route::get('product/{product}', ProductController::class)->name('product');
 
     Route::controller(FavoriteProductController::class)->group(function () {
         Route::get('/favorites', 'index')->name('favorites');

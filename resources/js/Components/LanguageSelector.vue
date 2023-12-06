@@ -39,6 +39,8 @@ const page = usePage()
         <template #content>
             <DropdownLink v-for="(langLink, index) in $page.props.languageSelector"
                           rel="alternate"
+                          :key="`lang${index}`"
+                          :inertia="false"
                           :hreflang="langLink.hreflang"
                           :href="langLink.href">
                 <div class="flex items-center gap-1">
