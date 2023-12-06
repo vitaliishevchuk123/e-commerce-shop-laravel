@@ -7,7 +7,7 @@ const page = usePage();
 const selectedFilters = ref([]);
 
 const handleCheckboxChange = (value) => {
-    const queryParams = new URLSearchParams(page.url.split('?')[1])
+    const queryParams = new URLSearchParams(window.location.search)
 
     if (queryParams.has(props.filter.code)) {
         const filterValues = queryParams.getAll(props.filter.code)[0].split(',');
@@ -34,7 +34,7 @@ const handleCheckboxChange = (value) => {
 };
 
 const updateUrlWithFilters = (searchParams) => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams();
     searchParams.forEach((value, key) => {
         params.set(key, value);
     });
@@ -43,8 +43,6 @@ const updateUrlWithFilters = (searchParams) => {
     const currentURL = new URL(window.location.href);
 
     currentURL.search = newParams;
-    // window.history.pushState({}, '', currentURL);
-
     router.visit(currentURL.href);
 };
 
