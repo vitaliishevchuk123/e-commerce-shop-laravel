@@ -85,6 +85,19 @@ class CategoryResource extends Resource
 }
 ```
 
+### Stubs
+
+Modify migration stubs:
+
+```php
+public function down(): void
+    {
+        if (app()->isLocal()) {
+            //
+        }
+    }
+``` 
+
 ## Dev tips
 
 ### Permissions
