@@ -154,6 +154,9 @@ class AppServiceProvider extends ServiceProvider
     'token' => env('LOGGER_TELEGRAM_BOT_TOKEN', ''),
 ],
 ``` 
+Example:
+
+<img width="800" alt="img" src="./public/img/readme/telegram_logs_example.png" />
 
 ## Dev tips
 
