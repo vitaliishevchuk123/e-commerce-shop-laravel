@@ -3,7 +3,7 @@
 
 <h1 align="center" style="color: dodgerblue">E-commerce Shop</h1>
 
-## About project
+## 🔵 About project
 
 Ecommerce Shop with Laravel/Inertia/VueJs 3/Filament and API's. 
 
@@ -13,7 +13,7 @@ Will use some features, such as:
 - Separate admin panel auth /admin/login using Laravel Filament.
 - Spatie permissions. Only user with role Admin has access to admin panel. See UserSeeder generate a few test users with role Admin
 
-## Installation
+## 🔵 Installation
 - Install Redis for horizon
 - Install DB (mysql/postgres)
 - Copy from .env.example and create a new .env file. In it we register a connection to the database
@@ -39,7 +39,7 @@ npm run build
 npm run dev
 ```
 
-## Detail
+## 🔵 Detail
 
 ### Category tree
 Use package `efureev/laravel-trees`  for Category tree structure with multi tree.
@@ -172,7 +172,7 @@ Example:
 
 <img width="800" alt="img" src="./public/img/readme/telegram_logs_example.png" />
 
-## Dev tips
+## 🔵 Dev tips
 
 ### Permissions
 Without going into bash, just in the project folder for the first time give the perms
