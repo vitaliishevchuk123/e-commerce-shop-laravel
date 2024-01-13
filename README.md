@@ -180,7 +180,7 @@ Without going into bash, just in the project folder for the first time give the 
 sudo chmod -R 777  ./
 ```
 
-## Docker
+### Docker
 ```
 docker-compose build --no-cache
 docker-compose up --build --force-recreate --no-deps
