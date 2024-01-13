@@ -145,6 +145,20 @@ class AppServiceProvider extends ServiceProvider
     }
 }
 
+class Handler extends ExceptionHandler
+{
+    public function register(): void
+    {
+        $this->reportable(function (Throwable $e) {
+            if ($this->shouldReport($e)) {
+                logger()
+                    ->channel('telegram')
+                    ->error("🚨🆘😟 ❗❗❗ {$e->getMessage()}\n. File: {$e->getFile()}\n. Line: {$e->getLine()}");
+            }
+        });
+    }
+}
+
 // config/logging.php
 'telegram' => [
     'driver' => 'custom',
