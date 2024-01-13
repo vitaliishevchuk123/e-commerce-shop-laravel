@@ -98,6 +98,63 @@ public function down(): void
     }
 ``` 
 
+### Strict mode
+
+Enable strict mode for local environment:
+
+```php
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+        {
+            Model::shouldBeStrict(!app()->isProduction());
+``` 
+
+### Telegram logger
+
+Add telegram logger:
+
+```php
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+    //...
+        if (app()->isProduction()) {
+            $this->logLongRequests();
+        }
+    }
+    
+    public function logLongRequests()
+    {
+        DB::listen(function ($query) {
+            if ($query->time > 100) {
+                logger()
+                    ->channel('telegram')
+                    ->debug("🛠 Need fix SQL 👨🏾‍🔧🔧 \n Query longer then 1ms:  . $query->sql, $query->bindings");
+            }
+        });
+
+        app(Kernel::class)->whenRequestLifecycleIsLongerThan(
+            CarbonInterval::seconds(4),
+            function () {
+                logger()->channel('telegram')
+                    ->debug("⚙️ Need fix Request 👨🏾‍🔧🔧 \n Long term query: " . request()->url());
+            }
+        );
+    }
+}
+
+// config/logging.php
+'telegram' => [
+    'driver' => 'custom',
+    'via' => TelegramLoggerFactory::class,
+    'level' => env('LOG_LEVEL', 'debug'),
+    'chat_id' => env('LOGGER_TELEGRAM_CHAT_ID', ''),
+    'token' => env('LOGGER_TELEGRAM_BOT_TOKEN', ''),
+],
+``` 
+
 ## Dev tips
 
 ### Permissions
