@@ -19,6 +19,9 @@ return new class extends Migration {
 
     public function down(): void
     {
+        if (!app()->isLocal()) {
+            return;
+        }
         Schema::dropIfExists('attribute_value_product');
     }
 };

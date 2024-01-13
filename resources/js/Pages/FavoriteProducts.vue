@@ -29,11 +29,12 @@ const filteredFavoriteProducts = computed(() => {
     <MainLayout>
         <ContentWrapper class="mt-6">
             <Breadcrumbs :breadcrumbs="breadcrumbs" class="mb-6"/>
-            <MainTitle title="Улюблені"/>
+            <MainTitle :title="__('Favorite')"/>
             <div class="product-cards grid grid-cols-4 gap-6 mr-4 mb-6">
                 <ProductCard v-for="(product, index) in filteredFavoriteProducts"
                              :key="'favorite-product-' + index"
                              :product="product"
+                             :buy-button="false"
                 />
             </div>
         </ContentWrapper>

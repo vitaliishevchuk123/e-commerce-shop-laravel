@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Product;
-use App\Services\ElasticsearhProductService;
+use App\Services\Elasticsearch\ElasticsearhProductService;
 use Illuminate\Console\Command;
 
 class ElasticAddIndexProduct extends Command
@@ -24,5 +24,6 @@ class ElasticAddIndexProduct extends Command
             $this->info("Product id {$product->id} - {$result}");
         }
         $this->info('Done!');
+        return self::SUCCESS;
     }
 }

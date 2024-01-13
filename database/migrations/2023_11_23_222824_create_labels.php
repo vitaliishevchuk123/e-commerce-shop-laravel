@@ -19,6 +19,9 @@ return new class extends Migration {
 
 	public function down()
 	{
+        if (!app()->isLocal()) {
+            return;
+        }
 		Schema::dropIfExists('labels');
 	}
 };

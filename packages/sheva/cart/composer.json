@@ -1,0 +1,33 @@
+{
+    "name": "sheva/cart",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "sheva/packages-contracts": "dev-master",
+        "mcamara/laravel-localization": "^1.8",
+        "spatie/laravel-translatable": "^6.5",
+        "brick/money": "^0.8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sheva\\Cart\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sheva\\Cart\\CartServiceProvider"
+            ]
+        }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./packages/sheva/packages-contracts",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "minimum-stability": "dev"
+}

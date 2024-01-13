@@ -1,7 +1,7 @@
 <script setup>
 import Footer from "@/Layouts/Footer.vue";
 import Header from "@/Layouts/Header.vue";
-import CatalogMenuModal from "@/Components/CatalogMenuModal.vue";
+import CatalogMenuModal from "@/Components/Catalog/CatalogMenuModal.vue";
 </script>
 
 <template>

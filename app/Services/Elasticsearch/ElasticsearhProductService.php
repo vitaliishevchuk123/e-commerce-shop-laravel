@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Elasticsearch;
 
 use App\Models\Attribute;
 use App\Models\AttributeValue;

@@ -1,0 +1,13 @@
+{
+    "name": "sheva/packages-contracts",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sheva\\PackagesContracts\\": "src"
+        }
+    },
+    "minimum-stability": "dev"
+}

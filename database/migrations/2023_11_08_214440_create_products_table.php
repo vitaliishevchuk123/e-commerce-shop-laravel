@@ -11,7 +11,9 @@ return new class extends Migration {
 			$table->id();
 
             $table->foreignIdFor(\App\Models\Brand::class)->nullable()
-                ->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->nullOnDelete();
             $table->string('sku', 100)->unique();
             $table->jsonb('name');
             $table->string('slug', 150)->unique()->nullable();
@@ -29,6 +31,9 @@ return new class extends Migration {
 
 	public function down()
 	{
+        if (!app()->isLocal()) {
+            return;
+        }
 		Schema::dropIfExists('products');
 	}
 };

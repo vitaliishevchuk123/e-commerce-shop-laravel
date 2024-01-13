@@ -97,4 +97,9 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsToMany(Label::class);
     }
+
+    public function getUrl(): string
+    {
+        return route('product', $this->slug);
+    }
 }

@@ -5,9 +5,9 @@ import Breadcrumbs from "@/Components/Breadcrumbs.vue";
 import MainTitle from "@/Components/MainTitle.vue";
 import ContentWrapper from "@/Components/ContentWrapper.vue";
 import SortingFields from "@/Components/SortingFields.vue";
-import CategorySiblings from "@/Components/CategorySiblings.vue";
-import CatalogProducts from "@/Components/CatalogProducts.vue";
-import CatalogFilters from "@/Components/CatalogFilters.vue";
+import CategorySiblings from "@/Components/Catalog/CategorySiblings.vue";
+import CatalogProducts from "@/Components/Catalog/CatalogProducts.vue";
+import CatalogFilters from "@/Components/Catalog/CatalogFilters.vue";
 
 defineProps({
         title: String,

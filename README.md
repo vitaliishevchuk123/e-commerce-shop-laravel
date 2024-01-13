@@ -5,7 +5,7 @@
 
 ## About project
 
-Ecommerce Shop with Laravel/Inertia/VueJs/Filament and API's. 
+Ecommerce Shop with Laravel/Inertia/VueJs 3/Filament and API's. 
 
 Will use some features, such as:
 
@@ -18,15 +18,25 @@ Will use some features, such as:
 - Install DB (mysql/postgres)
 - Copy from .env.example and create a new .env file. In it we register a connection to the database
 - Run the commands:
+### Backend
 ```
 composer install
 php artisan key:generate
 php artisan migrate
+php artisan storage:link
 php artisan db:seed
 npm install
 php artisan serve
 php artisan horizon
 vite
+```
+### Frontend
+By default, you don't need npm install. Because project has built front files
+```
+npm install
+npm run build
+//or
+npm run dev
 ```
 
 ## Detail
@@ -62,7 +72,7 @@ class CategoryResource extends Resource
                         ->getOptionLabelFromRecordUsing(function (Model $record) {
                             return $record->name;
                         })
-                        ->saveRelationshipsUsing(function (Category $childNode, $state) {
+                        ->saveRelationshipsUsing(function ([.bashrc](..%2F..%2F.bashrc)Category $childNode, $state) {
                             if (!$state) {
                                 return;
                             }
@@ -75,3 +85,34 @@ class CategoryResource extends Resource
 }
 ```
 
+## Dev tips
+
+### Permissions
+Without going into bash, just in the project folder for the first time give the perms
+```
+sudo chmod -R 777  ./
+```
+
+## Docker
+```
+docker-compose build --no-cache
+docker-compose up --build --force-recreate --no-deps
+docker-compose down
+docker-compose up -d
+docker exec -it project_name_app bash
+systemctl restart docker
+```
+
+### Aliases Mac OS
+For those new to creating bash aliases, the process is pretty simple. 
+First, open up the ~/.zshrc file in a text editor that is found in your home directory.
+Uncomment or add the following lines:
+```
+cd ~ 
+open .zshrc
+```
+Paste text alias `.zshrc` and save file:
+```
+alias a="php artisan"
+```
+Reopen terminal

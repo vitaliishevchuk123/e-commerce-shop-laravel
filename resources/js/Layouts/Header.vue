@@ -6,7 +6,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {computed, ref} from "vue";
 import NavLink from "@/Components/NavLink.vue";
 import IconCounter from "@/Components/IconCounter.vue";
-import CatalogMenuModal from "@/Components/CatalogMenuModal.vue";
+import CatalogMenuModal from "@/Components/Catalog/CatalogMenuModal.vue";
 import LanguageSelector from "@/Components/LanguageSelector.vue";
 import Link from "@/Components/Link.vue";
 import {usePage} from "@inertiajs/vue3";
@@ -210,7 +210,7 @@ function logout() {
                     <IconCounter :href="route('favorites')" :count="favoriteIds.length">
                         <img src="/img/front/heart.svg" alt="heart">
                     </IconCounter>
-                    <IconCounter href="#" :count="0">
+                    <IconCounter :href="route('cart.index')" :count="$page.props.cartCount">
                         <img src="/img/front/cart.svg" alt="cart">
                     </IconCounter>
                 </div>

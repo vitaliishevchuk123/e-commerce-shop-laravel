@@ -1,6 +1,7 @@
 <script setup>
 import {computed, ref} from "vue";
 import {useMouseInElement} from "@vueuse/core";
+import Link from "@/Components/Link.vue";
 
 defineProps({
         item: Object,
@@ -31,7 +32,8 @@ const buttonTransform = computed(() => {
 </script>
 
 <template>
-    <div ref="target"
+    <Link ref="target"
+          :href="route('catalog', item.slug)"
          :style="{
                 transform: buttonTransform,
                 transition: 'transform 0.25s ease-out'
@@ -47,7 +49,7 @@ const buttonTransform = computed(() => {
             :src="item.image"
             :alt="item.name + ' image'"
         />
-    </div>
+    </Link>
 </template>
 
 

@@ -23,5 +23,7 @@ class Parser extends Command
             'product' => app(ProductParser::class)->parse(),
             default => $this->error('Invalid parser type'),
         };
+
+        return self::SUCCESS;
     }
 }

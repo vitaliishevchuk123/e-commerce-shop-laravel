@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "codewithdennis/filament-select-tree": "^3.1",
         "efureev/laravel-trees": "^3.8",
         "elasticsearch/elasticsearch": "^8.11",
@@ -23,6 +23,8 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "mcamara/laravel-localization": "^1.8",
+        "sheva/cart": "dev-master",
+        "sheva/packages-contracts": "dev-master",
         "spatie/eloquent-sortable": "^4.0",
         "spatie/laravel-permission": "^6.0",
         "spatie/laravel-sluggable": "^3.5",
@@ -69,7 +71,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "a": "php artisan"
     },
     "extra": {
         "laravel": {
@@ -85,6 +88,22 @@
             "php-http/discovery": true
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./packages/sheva/packages-contracts",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "./packages/sheva/cart",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "minimum-stability": "stable",
     "prefer-stable": true
 }

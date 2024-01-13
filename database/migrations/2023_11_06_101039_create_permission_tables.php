@@ -123,6 +123,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (!app()->isLocal()) {
+            return;
+        }
         $tableNames = config('permission.table_names');
 
         if (empty($tableNames)) {

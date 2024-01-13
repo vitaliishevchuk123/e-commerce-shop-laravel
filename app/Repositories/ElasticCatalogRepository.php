@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Helpers\Breadcrumbs;
 use App\Models\Category;
-use App\Services\ElasticsearhProductService;
+use App\Services\Elasticsearch\ElasticsearhProductService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;

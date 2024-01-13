@@ -30,6 +30,7 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':global',
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -38,6 +39,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\SetUserUuid::class,
         ],
 
         'api' => [

@@ -42,7 +42,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div>
+    <div v-if="slides.length">
         <Splide
             aria-labelledby="thumbnail-example-heading"
             :options="mainOptions"

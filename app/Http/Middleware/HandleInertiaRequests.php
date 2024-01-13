@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Inertia\Middleware;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use Sheva\Cart\Facades\Cart;
 use Tightenco\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
@@ -58,18 +59,10 @@ class HandleInertiaRequests extends Middleware
             'locale' => function () {
                 return app()->getLocale();
             },
-            'language' => function () {
-                $filePath = base_path('/lang/' . app()->getLocale() . '.json');
-                if (!File::exists($filePath)) {
-                    return [];
-                }
-                return json_decode(
-                    File::get($filePath),
-                    true
-                );
-            },
+            'language' => app('translator')->getLoader()->load(app()->getLocale(),'*', '*'),
             'languageSelector' => $this->generateSwitchLinks(),
             'favoriteIds' => $favoriteRepository->getIds($request),
+            'cartCount' => Cart::getProductsQuantityCount(),
         ];
     }
 
